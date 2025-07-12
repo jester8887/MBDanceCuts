@@ -6,21 +6,29 @@
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <style>
     body { font-family: sans-serif; padding: 2em; background: #f4f4f4; }
-    .player-wrapper { max-width: 600px; margin: auto; }
+    .player-wrapper { max-width: 600px; margin: auto; margin-bottom: 3em; }
   </style>
 </head>
 <body>
+
   <div class="player-wrapper">
     <h2>Wicked Mix</h2>
     <audio id="player1" controls>
-      <source src=https://dl.dropboxusercontent.com/scl/fi/9x5wsy525wigb09c4jn3o/Wicked-V1-3m02s.mp3?rlkey=7wjenrvg8u9zl2pl9afq0uaga&st=71lfbcq7
-" type="audio/mp3" />
+      <source src="https://dl.dropboxusercontent.com/scl/fi/9x5wsy525wigb09c4jn3o/Wicked-V1-3m02s.mp3?rlkey=7wjenrvg8u9zl2pl9afq0uaga&st=71lfbcq7" type="audio/mp3" />
+    </audio>
+  </div>
+
+  <div class="player-wrapper">
+    <h2>80s Mix</h2>
+    <audio id="player2" controls>
+      <source src="https://dl.dropboxusercontent.com/scl/fi/kpe8t6anzlcags2yghlci/80s-Mix-2m25s.mp3?rlkey=kxzpk7gdghdxqmbtk3yojoegt&st=erp9ox8l" type="audio/mp3" />
     </audio>
   </div>
 
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script>
-    const player = new Plyr('#player1', { controls: ['play', 'progress', 'current-time'] });
+    const player1 = new Plyr('#player1', { controls: ['play', 'progress', 'current-time'] });
+    const player2 = new Plyr('#player2', { controls: ['play', 'progress', 'current-time'] });
   </script>
 </body>
 </html>
