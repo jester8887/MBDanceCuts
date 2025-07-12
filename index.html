@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Private Audio Player</title>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #f4f4f4; }
+    .player-wrapper { max-width: 600px; margin: auto; }
+  </style>
+</head>
+<body>
+  <div class="player-wrapper">
+    <h2>Track 1</h2>
+    <audio id="player1" controls>
+      <source src="https://drive.google.com/uc?export=download&id=1j_T3Un19yDhTp1jKL5BqZW6v6gAmnuzh" type="audio/mp3" />
+    </audio>
+  </div>
+
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script>
+    const player = new Plyr('#player1', { controls: ['play', 'progress', 'current-time'] });
+  </script>
+</body>
+</html>
