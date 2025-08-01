@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Basic Mixes by Marc Beth</title>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 1.5em;
+    }
+    .player-wrapper {
+      max-width: 600px;
+      margin: auto;
+      margin-bottom: 3em;
+    }
+    audio::-internal-media-controls-download-button {
+      display: none;
+    }
+    audio::-webkit-media-controls-enclosure {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Basic Mixes by Marc Beth</h1>
+
+  <div class="player-wrapper" oncontextmenu="return false">
+    <h2>Hip Hop Gold</h2>
+    <audio id="player1" controls controlsList="nodownload" preload="none">
+      <source src="https://dl.dropboxusercontent.com/scl/fi/7p6tr8t1dyb3xprg7oske/Hip-Hop-Gold.mp3?rlkey=j8rz0f8zmdyxmtnc0h6yn5wlv&st=fk7yjhsh" type="audio/mp3" />
+    </audio>
+  </div>
+
+  <div class="player-wrapper" oncontextmenu="return false">
+    <h2>Sports Hip Hop</h2>
+    <audio id="player2" controls controlsList="nodownload" preload="none">
+      <source src="https://dl.dropboxusercontent.com/scl/fi/13cuc4bhn86cd5kfh1ybu/Sports-Hip-Hop.mp3?rlkey=0uuw2d3ao1gqch6t4ryqf7h2j&st=6rj15gx5" type="audio/mp3" />
+    </audio>
+  </div>
+
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script>
+    const players = [];
+    for (let i = 1; i <= 2; i++) {
+      players.push(new Plyr(`#player${i}`, { controls: ['play', 'progress', 'current-time'] }));
+    }
+  </script>
+</body>
+</html>
