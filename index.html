@@ -2,117 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Private Audio Player</title>
+  <title>Mixes by Marc Beth</title>
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <style>
     body {
       font-family: sans-serif;
       padding: 2em;
       background: #f4f4f4;
+      text-align: center;
     }
     h1 {
-      text-align: center;
       font-size: 2em;
-      margin-bottom: 1.5em;
+      margin-bottom: 1em;
     }
-    .player-wrapper {
-      max-width: 600px;
-      margin: auto;
-      margin-bottom: 3em;
+    nav {
+      margin-bottom: 2em;
     }
-    audio::-internal-media-controls-download-button {
-      display: none;
+    nav a {
+      margin: 0 1em;
+      text-decoration: none;
+      color: #0073e6;
+      font-weight: bold;
     }
-    audio::-webkit-media-controls-enclosure {
-      overflow: hidden;
+    nav a:hover {
+      text-decoration: underline;
     }
-    audio {
-      pointer-events: none;
+    .contact {
+      margin-top: 3em;
+      font-size: 1.1em;
     }
   </style>
 </head>
 <body>
 
-  <h1>Marc Beth Mixes Available</h1>
+  <h1>Mixes by Marc Beth</h1>
 
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Wicked Mix</h2>
-    <audio id="player1" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/9x5wsy525wigb09c4jn3o/Wicked-V1-3m02s.mp3?rlkey=7wjenrvg8u9zl2pl9afq0uaga&st=71lfbcq7" type="audio/mp3" />
-    </audio>
+  <nav>
+    <a href="basic.html">Basic Mixes</a>
+    <a href="prodmixes.html">Production Mixes</a>
+  </nav>
+
+  <div class="contact">
+    Contact <a href="mailto:marcgbeth@gmail.com">marcgbeth@gmail.com</a> to purchase a mix or to create a custom mix.
   </div>
 
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>80s Mix</h2>
-    <audio id="player2" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/kpe8t6anzlcags2yghlci/80s-Mix-2m25s.mp3?rlkey=kxzpk7gdghdxqmbtk3yojoegt&st=erp9ox8l" type="audio/mp3" />
-    </audio>
-  </div>
-
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Beyonce Cowboy Carter Mix</h2>
-    <audio id="player3" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/b56lbn2mx7vjfcbl3hygx/Beyonce-Mix-Cowboy-Carter-American-Has-a-Problem-2m08s.mp3?rlkey=ck07zcy4pdr5bdioyxrxtvrte&st=cei4fbk9" type="audio/mp3" />
-    </audio>
-  </div>
-
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Classic Hip Hop Mix</h2>
-    <audio id="player4" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/p72wctzfu430fd4fjdwi2/Classic-Hip-Hop-Mix-V1-2m13s.mp3?rlkey=zgbbo5plj83xtw4pvd5ftajv4&st=nwhe5usj" type="audio/mp3" />
-    </audio>
-  </div>
-
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Classic Pop Rock Hits Medium Length</h2>
-    <audio id="player5" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/qk069impvnwv89b9jsutr/Classic-Hits-Mix-3m42s.mp3?rlkey=3jlddxz4k8zpxyg4a4nsp64n0&st=31avduzn" type="audio/mp3" />
-    </audio>
-  </div>
-
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Classic Pop Rock Hits Production Mix</h2>
-    <audio id="player6" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/fea7sizup9bgko668eowi/Classic-Hits-Mix-V4-6m02s.mp3?rlkey=jlkzavibi1xlsctupcbtducxx&st=6efdoe45" type="audio/mp3" />
-    </audio>
-  </div>
-
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Hip Hop Gold Mix</h2>
-    <audio id="player7" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/fx5c72m3g1qdvediopmy3/Gold-Mix-V2-1m48s.mp3?rlkey=mlgbln2q3ezi4k3eobmvq0jfu&st=l5edn427" type="audio/mp3" />
-    </audio>
-  </div>
-
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Lady Gaga Production Mix</h2>
-    <audio id="player8" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/2hdydcvlxgjgtqivarq3u/Lady-Gaga-Mix-V5-5m02s.mp3?rlkey=ariniwp2b6icwy7qdr83sip9d&st=65ztz4h0" type="audio/mp3" />
-    </audio>
-  </div>
-
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Sports Hip Hop Mix</h2>
-    <audio id="player9" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/gg3r2103ogwtokbjbs5z9/Sports-Hip-Hop-Mix-2m50s.mp3?rlkey=8hwnm6goxguligyis3y6wybdq&st=aplh6s71" type="audio/mp3" />
-    </audio>
-  </div>
-
-   <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Hip Hop Misbehavior Mix</h2>
-    <audio id="player10" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/dlgwkicohc2nwfsu2p8gn/Misbehavior-Mix-V3-1m57s.mp3?rlkey=qc8bgz94i7alhr7nl2pfkr1c1&st=zx6lvrq4
-" />
-    </audio>
-  </div>
-
-
-  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-  <script>
-    const players = [];
-    for (let i = 1; i <= 10; i++) {
-      players.push(new Plyr(`#player${i}`, { controls: ['play', 'progress', 'current-time'] }));
-    }
-  </script>
 </body>
 </html>
