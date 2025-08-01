@@ -13,52 +13,71 @@
     h1 {
       text-align: center;
       font-size: 2em;
+      margin-bottom: 1em;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
       margin-bottom: 1.5em;
+      font-size: 1.1em;
     }
     .player-wrapper {
       max-width: 600px;
-      margin: auto;
-      margin-bottom: 3em;
+      margin: 1.5em auto;
+      background: white;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    audio::-internal-media-controls-download-button {
-      display: none;
-    }
-    audio::-webkit-media-controls-enclosure {
-      overflow: hidden;
+    .player-title {
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-
   <h1>Production Mixes by Marc Beth</h1>
+  <a class="back-link" href="index.html">Back to Index</a>
 
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Beyonce Mix (10 Minutes)</h2>
-    <audio id="player1" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/02qe4bgbt101avkj6fx0m/Beyonce-Marissa-Mix-V2.mp3?rlkey=poxwy7osjawkq6quuf8au9339&st=hqxlzz9a" type="audio/mp3" />
+  <div class="player-wrapper">
+    <div class="player-title">Lady Gaga Production</div>
+    <audio controls>
+      <source src="https://www.dropbox.com/scl/fi/2hdydcvlxgjgtqivarq3u/Lady-Gaga-Mix-V5-5m02s.mp3?rlkey=ariniwp2b6icwy7qdr83sip9d&st=vmlmojnf&dl=1" type="audio/mp3">
     </audio>
   </div>
 
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Classic Pop Rock Hits Production Mix</h2>
-    <audio id="player2" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/fea7sizup9bgko668eowi/Classic-Hits-Mix-V4-6m02s.mp3?rlkey=jlkzavibi1xlsctupcbtducxx&st=6efdoe45" type="audio/mp3" />
+  <div class="player-wrapper">
+    <div class="player-title">Gold Hip Hop</div>
+    <audio controls>
+      <source src="https://www.dropbox.com/scl/fi/fx5c72m3g1qdvediopmy3/Gold-Mix-V2-1m48s.mp3?rlkey=mlgbln2q3ezi4k3eobmvq0jfu&st=s9fjyz29&dl=1" type="audio/mp3">
     </audio>
   </div>
 
-  <div class="player-wrapper" oncontextmenu="return false">
-    <h2>Lady Gaga Production Mix</h2>
-    <audio id="player3" controls controlsList="nodownload" preload="none">
-      <source src="https://dl.dropboxusercontent.com/scl/fi/2hdydcvlxgjgtqivarq3u/Lady-Gaga-Mix-V5-5m02s.mp3?rlkey=ariniwp2b6icwy7qdr83sip9d&st=65ztz4h0" type="audio/mp3" />
+  <div class="player-wrapper">
+    <div class="player-title">Classic Hits Production</div>
+    <audio controls>
+      <source src="https://www.dropbox.com/scl/fi/fea7sizup9bgko668eowi/Classic-Hits-Mix-V4-6m02s.mp3?rlkey=jlkzavibi1xlsctupcbtducxx&st=pvqgvmo2&dl=1" type="audio/mp3">
+    </audio>
+  </div>
+
+  <div class="player-wrapper">
+    <div class="player-title">Beyonce Production 5 Minute</div>
+    <audio controls>
+      <source src="https://www.dropbox.com/scl/fi/bz1sp5prmbty6s9caupka/Madison-Beyonce-Mix-V2-5min.mp3?rlkey=8gfxqcnq82ponj7jk8rcaqevf&st=y8863nzw&dl=1" type="audio/mp3">
+    </audio>
+  </div>
+
+  <div class="player-wrapper">
+    <div class="player-title">Beyonce Production 10 Minute</div>
+    <audio controls>
+      <source src="https://www.dropbox.com/scl/fi/02qe4bgbt101avkj6fx0m/Beyonce-Marissa-Mix-V2.mp3?rlkey=poxwy7osjawkq6quuf8au9339&st=9z982u3t&dl=1" type="audio/mp3">
     </audio>
   </div>
 
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script>
-    const players = [];
-    for (let i = 1; i <= 3; i++) {
-      players.push(new Plyr(`#player${i}`, { controls: ['play', 'progress', 'current-time'] }));
-    }
+    const players = Array.from(document.querySelectorAll('audio')).map(p => new Plyr(p));
   </script>
 </body>
 </html>
