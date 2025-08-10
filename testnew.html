@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Marc Beth • Mixes</title>
-  <!-- Tailwind Play CDN for quick styling -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Wavesurfer core + timeline plugin -->
   <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
   <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
   <style>
-    /* Custom tweaks */
-    .card { @apply bg-white rounded-2xl shadow-md p-4 border border-gray-100; }
-    .btn { @apply inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-gray-300 hover:bg-gray-50 active:bg-gray-100; }
-    .btn-primary { @apply border-transparent bg-black text-white hover:bg-gray-800; }
+    .card { background: white; border-radius: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 1rem; border: 1px solid #f3f4f6; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 500; border: 1px solid #d1d5db; background: white; cursor: pointer; }
+    .btn:hover { background: #f9fafb; }
+    .btn:active { background: #f3f4f6; }
+    .btn-primary { background: black; color: white; border: none; }
+    .btn-primary:hover { background: #111827; }
     .wave { height: 64px; }
     .timeline { height: 18px; font-size: 10px; color: #6b7280; }
     .sticky-player { backdrop-filter: blur(8px); }
