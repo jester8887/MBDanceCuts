@@ -121,9 +121,10 @@
 
     // Convert Dropbox share links to direct streamable links
     function toDirect(url) {
+      // Prefer raw=1 for inline; if dl=0 not present, add raw
       if (url.includes("dl=0")) return url.replace("dl=0", "raw=1");
-      if (url.includes("?")) return url + "&raw=1";
-      return url + "?raw=1";
+      if (!url.includes("raw=1")) return url + (url.includes("?") ? "&" : "?") + "raw=1";
+      return url;
     }
 
     // Generate slug for anchors
@@ -145,10 +146,11 @@
       Production: document.getElementById('grid-Production')
     };
 
-    const observers = new Map(); // cardId -> IntersectionObserver
+    const observers = new Map();
     const surfers = new Map();   // cardId -> WaveSurfer instance
+    const audios = new Map();    // cardId -> HTMLAudioElement
 
-    let current = { id: null, ws: null, title: '', anchor: '' };
+    let current = { id: null, ws: null, audio: null, title: '', anchor: '' };
 
     function formatTime(s) {
       const m = Math.floor(s / 60) || 0; const sec = Math.floor(s % 60) || 0; return `${m}:${sec.toString().padStart(2, '0')}`;
@@ -172,48 +174,67 @@
       const timeline = el('div', { className: 'timeline', id: `timeline-${anchor}` });
       waveWrap.append(wave, timeline);
 
+      // Hidden audio element (primary playback engine for CORS safety)
+      const audio = el('audio', { src: toDirect(url), preload: 'none' });
+      audio.style.display = 'none';
+      card.append(header, waveWrap, audio);
+
       const footer = el('div', { className: 'mt-3 flex items-center justify-between text-sm text-gray-500' }, [
         el('span', { innerText: group }),
         el('span', { innerText: 'Idle' })
       ]);
+      card.append(footer);
 
-      card.append(header, waveWrap, footer);
-
-      // Lazy instantiate Wavesurfer
+      // Lazy instantiate Wavesurfer using the media element backend
       const obs = new IntersectionObserver((entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            obs.disconnect(); // one-shot
-            const ws = WaveSurfer.create({
-              container: wave,
-              height: 64,
-              waveColor: '#cbd5e1',
-              progressColor: '#0f172a',
-              cursorColor: '#475569',
-              url: toDirect(url),
-              interact: true,
-              dragToSeek: true,
-              minPxPerSec: 50,
-            });
-            const tl = ws.registerPlugin(WaveSurfer.Timeline.create({ container: timeline }));
+            obs.disconnect();
+            try {
+              const ws = WaveSurfer.create({
+                container: wave,
+                height: 64,
+                waveColor: '#cbd5e1',
+                progressColor: '#0f172a',
+                cursorColor: '#475569',
+                interact: true,
+                dragToSeek: true,
+                minPxPerSec: 50,
+                media: audio, // Key: use HTMLMediaElement backend
+              });
+              ws.registerPlugin(WaveSurfer.Timeline.create({ container: timeline }));
 
-            surfers.set(cardId, ws);
-            playBtn.disabled = false;
+              surfers.set(cardId, ws);
+              audios.set(cardId, audio);
+              playBtn.disabled = false;
 
-            ws.on('ready', () => { footer.lastChild.textContent = `Loaded • ${formatTime(ws.getDuration())}`; });
-            ws.on('play', () => { playBtn.textContent = 'Pause'; footer.lastChild.textContent = 'Playing'; setNowPlaying(title, ws, `#${anchor}`); });
-            ws.on('pause', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Paused'; });
-            ws.on('finish', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Finished'; if (current.ws === ws) npPlay.textContent = 'Play'; });
+              const onReady = () => {
+                footer.lastChild.textContent = `Loaded • ${formatTime(audio.duration || ws.getDuration() || 0)}`;
+              };
+              audio.addEventListener('loadedmetadata', onReady, { once: true });
+              ws.on('ready', onReady);
 
-            playBtn.addEventListener('click', () => togglePlay(ws, title, `#${anchor}`));
-            shareBtn.addEventListener('click', () => copyLink(`#${anchor}`));
+              ws.on('play', () => { playBtn.textContent = 'Pause'; footer.lastChild.textContent = 'Playing'; setNowPlaying(title, ws, audio, `#${anchor}`); });
+              ws.on('pause', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Paused'; });
+              ws.on('finish', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Finished'; if (current.ws === ws) npPlay.textContent = 'Play'; });
 
-            // If URL hash matches, auto-focus this track
-            if (location.hash === `#${anchor}`) {
-              setTimeout(() => {
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                togglePlay(ws, title, `#${anchor}`);
-              }, 250);
+              playBtn.addEventListener('click', () => togglePlay(ws, audio, title, `#${anchor}`));
+              shareBtn.addEventListener('click', () => copyLink(`#${anchor}`));
+
+              if (location.hash === `#${anchor}`) {
+                setTimeout(() => {
+                  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  togglePlay(ws, audio, title, `#${anchor}`);
+                }, 250);
+              }
+            } catch (e) {
+              // Fallback: show native controls if Wavesurfer fails
+              waveWrap.remove();
+              audio.style.display = '';
+              audio.controls = true;
+              playBtn.remove();
+              shareBtn.addEventListener('click', () => copyLink(`#${anchor}`));
+              footer.lastChild.textContent = 'Fallback player ready';
             }
           }
         }
@@ -252,10 +273,9 @@
 
     function applyFilters() {
       const q = searchInput.value.trim().toLowerCase();
-      for (const [id, ws] of surfers) {} // reference to ensure map is kept
       document.querySelectorAll('article.card').forEach(card => {
         const title = card.querySelector('h3').textContent.toLowerCase();
-        const group = card.querySelector('span').textContent; // first span shows group
+        const group = card.querySelector('span').textContent;
         const matchText = !q || title.includes(q);
         const matchGroup = activeFilter === 'all' || activeFilter === group;
         card.style.display = matchText && matchGroup ? '' : 'none';
@@ -272,39 +292,41 @@
     const npDur = document.getElementById('npDur');
     const npCopy = document.getElementById('npCopy');
 
-    function setNowPlaying(title, ws, anchor) {
-      current = { id: null, ws, title, anchor };
+    function setNowPlaying(title, ws, audio, anchor) {
+      current = { id: null, ws, audio, title, anchor };
       npTitle.textContent = title;
       npPlay.disabled = npStop.disabled = npSeek.disabled = npCopy.disabled = false;
-      npPlay.textContent = ws.isPlaying() ? 'Pause' : 'Play';
-      npDur.textContent = formatTime(ws.getDuration());
+      npPlay.textContent = audio.paused ? 'Play' : 'Pause';
+      npDur.textContent = formatTime(audio.duration || ws.getDuration() || 0);
 
-      ws.on('audioprocess', updateSeek);
-      ws.on('seek', updateSeek);
-
-      function updateSeek() {
-        const dur = ws.getDuration();
-        const cur = ws.getCurrentTime();
+      const updateSeek = () => {
+        const dur = audio.duration || ws.getDuration() || 0;
+        const cur = audio.currentTime || ws.getCurrentTime() || 0;
         npSeek.value = dur ? Math.floor((cur / dur) * 100) : 0;
         npTime.textContent = formatTime(cur);
-      }
+      };
+      audio.addEventListener('timeupdate', updateSeek);
+      audio.addEventListener('loadedmetadata', updateSeek);
 
       npSeek.oninput = (e) => {
         const pct = Number(e.target.value) / 100;
-        ws.seekTo(pct);
+        const dur = audio.duration || ws.getDuration() || 0;
+        if (dur) audio.currentTime = pct * dur;
       };
 
-      npPlay.onclick = () => togglePlay(ws, title, anchor);
-      npStop.onclick = () => { ws.stop(); npPlay.textContent = 'Play'; };
+      npPlay.onclick = () => togglePlay(ws, audio, title, anchor);
+      npStop.onclick = () => { audio.pause(); audio.currentTime = 0; npPlay.textContent = 'Play'; };
       npCopy.onclick = () => copyLink(anchor);
       history.replaceState(null, '', anchor);
     }
 
-    function togglePlay(ws, title, anchor) {
-      // Pause any other
-      surfers.forEach(other => { if (other !== ws) other.pause(); });
-      ws.playPause();
-      setNowPlaying(title, ws, anchor);
+    function togglePlay(ws, audio, title, anchor) {
+      // Pause others
+      audios.forEach(a => { if (a !== audio) a.pause(); });
+      surfers.forEach(other => { if (other !== ws) other.pause && other.pause(); });
+
+      if (audio.paused) audio.play(); else audio.pause();
+      setNowPlaying(title, ws, audio, anchor);
     }
 
     async function copyLink(anchor) {
@@ -314,11 +336,12 @@
         npTitle.textContent = `${current.title} — link copied`;
         setTimeout(() => npTitle.textContent = current.title, 1200);
       } catch (e) {
-        alert('Copy failed. You can manually copy this link:\n' + url);
+        alert('Copy failed. You can manually copy this link:
+' + url);
       }
     }
 
-    // If page opened with a hash, ensure that card instantiates when reached
+    // If page opened with a hash, scroll to it so the lazy loader spins up that card
     if (location.hash) {
       const target = document.querySelector(location.hash);
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
