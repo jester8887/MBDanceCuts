@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marc Beth • Mixes</title>
+  <!-- Tailwind Play CDN for quick styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Wavesurfer core + timeline plugin -->
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
+  <style>
+    /* Custom tweaks */
+    .card { @apply bg-white rounded-2xl shadow-md p-4 border border-gray-100; }
+    .btn { @apply inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-gray-300 hover:bg-gray-50 active:bg-gray-100; }
+    .btn-primary { @apply border-transparent bg-black text-white hover:bg-gray-800; }
+    .wave { height: 64px; }
+    .timeline { height: 18px; font-size: 10px; color: #6b7280; }
+    .sticky-player { backdrop-filter: blur(8px); }
+    .sr-only-focusable:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <a href="#main" class="sr-only sr-only-focusable">Skip to content</a>
+
+  <header class="max-w-6xl mx-auto px-4 pt-10 pb-6">
+    <h1 class="text-3xl font-bold tracking-tight">Production Mixes and Shorter Themed Mixes</h1>
+    <p class="mt-2 text-sm text-gray-600">Waveform previews, lazy loading, and a sticky Now Playing bar. Audio hosted on Dropbox. Preload is off for speed.</p>
+  </header>
+
+  <main id="main" class="max-w-6xl mx-auto px-4 pb-28">
+    <!-- Filters -->
+    <section class="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      <div class="flex gap-2 flex-wrap">
+        <button data-filter="all" class="btn btn-primary" aria-pressed="true">All</button>
+        <button data-filter="Shorter" class="btn">Shorter Themed Mixes</button>
+        <button data-filter="Production" class="btn">Production Mixes</button>
+      </div>
+      <div class="sm:ml-auto w-full sm:w-72">
+        <label class="block text-xs text-gray-500 mb-1" for="search">Search titles</label>
+        <input id="search" type="search" placeholder="Type to filter..." class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+      </div>
+    </section>
+
+    <!-- Sections -->
+    <section id="section-Shorter" class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Shorter Themed Mixes</h2>
+      <div id="grid-Shorter" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+
+    <section id="section-Production" class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Production Mixes</h2>
+      <div id="grid-Production" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+  </main>
+
+  <!-- Sticky Now Playing Bar -->
+  <div id="nowPlaying" class="sticky bottom-0 inset-x-0 border-t border-gray-200 bg-white/90 sticky-player">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <button id="npPlay" class="btn btn-primary" aria-label="Play or pause" disabled>Play</button>
+      <div class="flex-1 min-w-0">
+        <div id="npTitle" class="truncate font-medium">Nothing playing</div>
+        <div class="mt-1">
+          <input id="npSeek" type="range" min="0" max="100" value="0" class="w-full" aria-label="Seek" disabled />
+          <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <span id="npTime">0:00</span>
+            <span id="npDur">0:00</span>
+          </div>
+        </div>
+      </div>
+      <button id="npStop" class="btn" aria-label="Stop" disabled>Stop</button>
+      <button id="npCopy" class="btn" aria-label="Copy link" disabled>Share</button>
+    </div>
+  </div>
+
+  <script>
+    // ---- Data ----
+    const mixes = [
+      // Shorter
+      ["80s Mix", "https://www.dropbox.com/scl/fi/kpe8t6anzlcags2yghlci/80s-Mix-2m25s.mp3?rlkey=kxzpk7gdghdxqmbtk3yojoegt&st=3marqkht&dl=0", "Shorter"],
+      ["Back to the Future Hip Hop", "https://www.dropbox.com/scl/fi/dhml2li67y72h9qrcl0n5/Back-to-the-Future-Hip-Hop-V4-2m27s.mp3?rlkey=9f6vcwqnv1t5qqeifrao40bcb&st=danufjle&dl=0", "Shorter"],
+      ["Beyonce Cowboy Mix", "https://www.dropbox.com/scl/fi/b56lbn2mx7vjfcbl3hygx/Beyonce-Mix-Cowboy-Carter-American-Has-a-Problem-2m08s.mp3?rlkey=ck07zcy4pdr5bdioyxrxtvrte&st=5adx79c6&dl=0", "Shorter"],
+      ["Gold Hip Hop", "https://www.dropbox.com/scl/fi/fx5c72m3g1qdvediopmy3/Gold-Mix-V2-1m48s.mp3?rlkey=mlgbln2q3ezi4k3eobmvq0jfu&st=s9fjyz29&dl=0", "Shorter"],
+      ["Candy", "https://www.dropbox.com/scl/fi/f5cdl413fi0sus1kinw2a/Candy-Mix-V3.mp3?rlkey=8ltgs1cmwmgvqbul305qkc0a5&st=h63wvqza&dl=0", "Shorter"],
+      ["Classic Hip Hop", "https://www.dropbox.com/scl/fi/p72wctzfu430fd4fjdwi2/Classic-Hip-Hop-Mix-V1-2m13s.mp3?rlkey=zgbbo5plj83xtw4pvd5ftajv4&st=5cxfblzq&dl=0", "Shorter"],
+      ["Classic Hits Shorter", "https://www.dropbox.com/scl/fi/qk069impvnwv89b9jsutr/Classic-Hits-Mix-3m42s.mp3?rlkey=3jlddxz4k8zpxyg4a4nsp64n0&st=3nz3snm6&dl=0", "Shorter"],
+      ["Cops", "https://www.dropbox.com/scl/fi/abgzq6m7c0jvwldy878b9/Cop-Mix-2m56s.mp3?rlkey=tkdbj3brrordh99hra3jabaru&st=fbqrn3qo&dl=0", "Shorter"],
+      ["Decades", "https://www.dropbox.com/scl/fi/o20pxkxiueyj6zv4q8877/Decades-Mix-V4-2m56s.mp3?rlkey=pkmuwnspqequ66lqmqnu5tw5e&st=7m6u0rg3&dl=0", "Shorter"],
+      ["Fashion", "https://www.dropbox.com/scl/fi/xgyf91g7ow1f95a6fjc5h/Fashion-Mix-V2.mp3?rlkey=xc9o78jq05821sowvd25arm4f&st=17e7d5a2&dl=0", "Shorter"],
+      ["Fire", "https://www.dropbox.com/scl/fi/uil2uhcu6bhadsgfcrshl/FireMix-Mix-V2-3m58s.mp3?rlkey=jvweca6fwe2lwh6bvxvp1xipf&st=v93gsw1f&dl=0", "Shorter"],
+      ["Girls", "https://www.dropbox.com/scl/fi/is17gysyipbb8plpr74cx/Girls-Mix-V1-3m30s.mp3?rlkey=8w90qq0um68ltcgtp6wnc34lr&st=rgh0b78g&dl=0", "Shorter"],
+      ["Hot Mix", "https://www.dropbox.com/scl/fi/ogicx22zd8whttrwauj6r/Hot-Mix-V2-2m15s.mp3?rlkey=nqavqivlmw2ttbn1erlyhwsjk&st=s36aq62c&dl=0", "Shorter"],
+      ["Jungle Mix 1", "https://www.dropbox.com/scl/fi/frzv2s04kir83iknnubr1/Jungle-Mix-JB-V2B-2m05s-Lion-Orig-Sped-Up.mp3?rlkey=g65t8c7sg3sakbmuvsl4ndp7r&st=2ladtr3s&dl=0", "Shorter"],
+      ["Misbehavior Hip Hop", "https://www.dropbox.com/scl/fi/dlgwkicohc2nwfsu2p8gn/Misbehavior-Mix-V3-1m57s.mp3?rlkey=qc8bgz94i7alhr7nl2pfkr1c1&st=0uzd6ldn&dl=0", "Shorter"],
+      ["Space Jam", "https://www.dropbox.com/scl/fi/lnmi7n3lcs8fdjvl2zd8n/SpaceJam-V2-3m23s.mp3?rlkey=uovj2ot9jjspnq2v1nuo7w316&st=xh2xmg5m&dl=0", "Shorter"],
+      ["Sports Hip Hop", "https://www.dropbox.com/scl/fi/gg3r2103ogwtokbjbs5z9/Sports-Hip-Hop-Mix-2m50s.mp3?rlkey=8hwnm6goxguligyis3y6wybdq&st=bg0rmphv&dl=0", "Shorter"],
+      ["Villains (WAV)", "https://www.dropbox.com/scl/fi/b7rufsm5f50w6k0gpr7xi/Villains-Mix-V1-2m40s.wav?rlkey=4gr3nif765fscrtiy327u3v8c&st=qz61vx72&dl=0", "Shorter"],
+      ["Wicked 1", "https://www.dropbox.com/scl/fi/9x5wsy525wigb09c4jn3o/Wicked-V1-3m02s.mp3?rlkey=7wjenrvg8u9zl2pl9afq0uaga&st=cg9xwu2p&dl=0", "Shorter"],
+      ["Wicked 2", "https://www.dropbox.com/scl/fi/0yswcv008akpell1bxg5n/Wicked-Mix-Alternate-Cut-2m46s.mp3?rlkey=ef0ynm9nuue0gg7f98vgapldh&st=0tohydij&dl=0", "Shorter"],
+      ["YMCA Mix", "https://www.dropbox.com/scl/fi/whxy6q5jsq64ojor9eacn/YMCA2-Mix-V1-2m6s.mp3?rlkey=8rk4ltx4irfbd2aypecmx074b&st=zlvhgijy&dl=0", "Shorter"],
+      ["Villains Mix", "https://www.dropbox.com/scl/fi/ubt28yly3h5wvcwafudx1/Villains-Mix-V1-2m40s.mp3?rlkey=16xjuq5ohak9xse61x7vz5b27&st=gy6nqfeg&dl=0", "Shorter"],
+      ["Sports Hip Hop 2", "https://www.dropbox.com/scl/fi/ki4vwf20wb4wwmuftstno/Sports-Hip-Hop-2-V1-2m57s.mp3?rlkey=yloqg4balyjinxe69ibuv4giq&st=kcmcwkx3&dl=0", "Shorter"],
+      ["Royals Mix", "https://www.dropbox.com/scl/fi/6mx1aep33jdzyuw5f1mln/Royals-Mix-V1-2m41s.mp3?rlkey=jtv39y9o5ri9euyvsd8homhoa&st=3m5eutqi&dl=0", "Shorter"],
+      ["Nelly Mix", "https://www.dropbox.com/scl/fi/1r32eqxzauof2958qv0hm/Nelly-Mix-V2-2m16s.mp3?rlkey=3rpff2y1igvbgbs6qns4ltv50&st=mzdcjgc6&dl=0", "Shorter"],
+      ["Monster Zombies Mix", "https://www.dropbox.com/scl/fi/4e9wnebhf4ir4e4wn6uq0/Monster-Zombie-Mix-V2-2m12s.mp3?rlkey=mcqsa8pgixgzzo3fdpeoyzmci&st=03xr1blc&dl=0", "Shorter"],
+      ["Lil Wayne Mix", "https://www.dropbox.com/scl/fi/qab3173txe0i9vehh2lth/Lil-Wayne-Mix-V1.mp3?rlkey=peh6ue55reirwelr9jg3eg207&st=7k83403y&dl=0", "Shorter"],
+      ["Latin Mix", "https://www.dropbox.com/scl/fi/ow8mftldvvld52tnzekf7/Latin-Mix-V2-2m23s.mp3?rlkey=kh4q0s9d13r8xgtpu7sqw2lz5&st=8b0utyk2&dl=0", "Shorter"],
+      ["Grease Hip Hop", "https://www.dropbox.com/scl/fi/ysmgkc433vfw4gdcrckkq/Grease-Hip-Hop-V2.mp3?rlkey=egxkjnuell6qvec0ybuou5nln&st=97yf1id0&dl=0", "Shorter"],
+      ["Girls 2 Mix", "https://www.dropbox.com/scl/fi/tq8taaujk0buw0t0iin17/Girls-Mix-V2-2m26s.mp3?rlkey=xe315kffujicgnhimv5uq11k9&st=om3syqto&dl=0", "Shorter"],
+      ["Fire and Ice Mix", "https://www.dropbox.com/scl/fi/y4q2ljaqhu41bpthyb0wg/Fire-and-Ice-V2-2m12s.mp3?rlkey=ag7w2jlvsfgpz1xi70yi0e7cp&st=4yn4rjz7&dl=0", "Shorter"],
+      ["Fashionista Mix", "https://www.dropbox.com/scl/fi/f2rdg7prw4oh95mv9rtc6/Fashionista-Mix-V1-1m51s.mp3?rlkey=ped74rau2zx1a0w2hycqegtv9&st=lmmllxhx&dl=0", "Shorter"],
+      ["Energy Surge", "https://www.dropbox.com/scl/fi/0thqimgaebjdnpcizicsy/Energy-Surge-V3-4m13s.mp3?rlkey=vtc92k4b9g4g3l2751xj2dvhu&st=g0t9m6lo&dl=0", "Shorter"],
+      ["Crunk Mix", "https://www.dropbox.com/scl/fi/c5qdmefu9pnmlh7g4vsv5/Crunk-2000s-V3-1m57s.mp3?rlkey=jwld340n3nixz9ra25r56t8cu&st=zxl14euj&dl=0", "Shorter"],
+      // Production
+      ["Lady Gaga Production", "https://www.dropbox.com/scl/fi/2hdydcvlxgjgtqivarq3u/Lady-Gaga-Mix-V5-5m02s.mp3?rlkey=ariniwp2b6icwy7qdr83sip9d&st=vmlmojnf&dl=0", "Production"],
+      ["Classic Hits Production", "https://www.dropbox.com/scl/fi/fea7sizup9bgko668eowi/Classic-Hits-Mix-V4-6m02s.mp3?rlkey=jlkzavibi1xlsctupcbtducxx&st=pvqgvmo2&dl=0", "Production"],
+      ["Beyonce Production 5 Minute", "https://www.dropbox.com/scl/fi/bz1sp5prmbty6s9caupka/Madison-Beyonce-Mix-V2-5min.mp3?rlkey=8gfxqcnq82ponj7jk8rcaqevf&st=y8863nzw&dl=0", "Production"],
+      ["Beyonce Production 10 Minute", "https://www.dropbox.com/scl/fi/02qe4bgbt101avkj6fx0m/Beyonce-Marissa-Mix-V2.mp3?rlkey=poxwy7osjawkq6quuf8au9339&st=9z982u3t&dl=0", "Production"],
+      ["Family Vacation Mix", "https://www.dropbox.com/scl/fi/b39036k0y9lygjovjhcmn/Family-Vacation-Mix-V2-7m52s.mp3?rlkey=6vvbgg2ieg9wdq20w3bc437c9&st=73cw0w6h&dl=0", "Production"],
+    ];
+
+    // Convert Dropbox share links to direct streamable links
+    function toDirect(url) {
+      if (url.includes("dl=0")) return url.replace("dl=0", "raw=1");
+      if (url.includes("?")) return url + "&raw=1";
+      return url + "?raw=1";
+    }
+
+    // Generate slug for anchors
+    function slugify(str) {
+      return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    }
+
+    // DOM helpers
+    const el = (tag, props = {}, children = []) => {
+      const node = document.createElement(tag);
+      Object.assign(node, props);
+      for (const child of children) node.append(child);
+      return node;
+    };
+
+    // Render cards
+    const grids = {
+      Shorter: document.getElementById('grid-Shorter'),
+      Production: document.getElementById('grid-Production')
+    };
+
+    const observers = new Map(); // cardId -> IntersectionObserver
+    const surfers = new Map();   // cardId -> WaveSurfer instance
+
+    let current = { id: null, ws: null, title: '', anchor: '' };
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60) || 0; const sec = Math.floor(s % 60) || 0; return `${m}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function makeCard([title, url, group]) {
+      const anchor = slugify(title);
+      const cardId = `card-${anchor}`;
+
+      const card = el('article', { className: 'card', id: cardId });
+      const header = el('div', { className: 'flex items-start gap-3' });
+      const playBtn = el('button', { className: 'btn btn-primary', innerText: 'Play', disabled: true });
+      const shareBtn = el('button', { className: 'btn', innerText: 'Share' });
+      const titleEl = el('h3', { className: 'font-semibold text-lg flex-1 truncate', innerText: title });
+
+      header.append(playBtn, titleEl, shareBtn);
+
+      // Waveform containers
+      const waveWrap = el('div', { className: 'mt-3' });
+      const wave = el('div', { className: 'wave', id: `wave-${anchor}` });
+      const timeline = el('div', { className: 'timeline', id: `timeline-${anchor}` });
+      waveWrap.append(wave, timeline);
+
+      const footer = el('div', { className: 'mt-3 flex items-center justify-between text-sm text-gray-500' }, [
+        el('span', { innerText: group }),
+        el('span', { innerText: 'Idle' })
+      ]);
+
+      card.append(header, waveWrap, footer);
+
+      // Lazy instantiate Wavesurfer
+      const obs = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            obs.disconnect(); // one-shot
+            const ws = WaveSurfer.create({
+              container: wave,
+              height: 64,
+              waveColor: '#cbd5e1',
+              progressColor: '#0f172a',
+              cursorColor: '#475569',
+              url: toDirect(url),
+              interact: true,
+              dragToSeek: true,
+              minPxPerSec: 50,
+            });
+            const tl = ws.registerPlugin(WaveSurfer.Timeline.create({ container: timeline }));
+
+            surfers.set(cardId, ws);
+            playBtn.disabled = false;
+
+            ws.on('ready', () => { footer.lastChild.textContent = `Loaded • ${formatTime(ws.getDuration())}`; });
+            ws.on('play', () => { playBtn.textContent = 'Pause'; footer.lastChild.textContent = 'Playing'; setNowPlaying(title, ws, `#${anchor}`); });
+            ws.on('pause', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Paused'; });
+            ws.on('finish', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Finished'; if (current.ws === ws) npPlay.textContent = 'Play'; });
+
+            playBtn.addEventListener('click', () => togglePlay(ws, title, `#${anchor}`));
+            shareBtn.addEventListener('click', () => copyLink(`#${anchor}`));
+
+            // If URL hash matches, auto-focus this track
+            if (location.hash === `#${anchor}`) {
+              setTimeout(() => {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                togglePlay(ws, title, `#${anchor}`);
+              }, 250);
+            }
+          }
+        }
+      }, { rootMargin: '200px' });
+
+      obs.observe(card);
+      observers.set(cardId, obs);
+
+      // Add anchor for sharing
+      card.prepend(el('a', { id: anchor }));
+
+      return card;
+    }
+
+    // Build the UI
+    for (const mix of mixes) {
+      const card = makeCard(mix);
+      const group = mix[2];
+      grids[group].append(card);
+    }
+
+    // Filter buttons
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    let activeFilter = 'all';
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+        activeFilter = btn.dataset.filter;
+        applyFilters();
+      });
+    });
+
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', applyFilters);
+
+    function applyFilters() {
+      const q = searchInput.value.trim().toLowerCase();
+      for (const [id, ws] of surfers) {} // reference to ensure map is kept
+      document.querySelectorAll('article.card').forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const group = card.querySelector('span').textContent; // first span shows group
+        const matchText = !q || title.includes(q);
+        const matchGroup = activeFilter === 'all' || activeFilter === group;
+        card.style.display = matchText && matchGroup ? '' : 'none';
+      });
+    }
+
+    // Now Playing controls
+    const np = document.getElementById('nowPlaying');
+    const npTitle = document.getElementById('npTitle');
+    const npPlay = document.getElementById('npPlay');
+    const npStop = document.getElementById('npStop');
+    const npSeek = document.getElementById('npSeek');
+    const npTime = document.getElementById('npTime');
+    const npDur = document.getElementById('npDur');
+    const npCopy = document.getElementById('npCopy');
+
+    function setNowPlaying(title, ws, anchor) {
+      current = { id: null, ws, title, anchor };
+      npTitle.textContent = title;
+      npPlay.disabled = npStop.disabled = npSeek.disabled = npCopy.disabled = false;
+      npPlay.textContent = ws.isPlaying() ? 'Pause' : 'Play';
+      npDur.textContent = formatTime(ws.getDuration());
+
+      ws.on('audioprocess', updateSeek);
+      ws.on('seek', updateSeek);
+
+      function updateSeek() {
+        const dur = ws.getDuration();
+        const cur = ws.getCurrentTime();
+        npSeek.value = dur ? Math.floor((cur / dur) * 100) : 0;
+        npTime.textContent = formatTime(cur);
+      }
+
+      npSeek.oninput = (e) => {
+        const pct = Number(e.target.value) / 100;
+        ws.seekTo(pct);
+      };
+
+      npPlay.onclick = () => togglePlay(ws, title, anchor);
+      npStop.onclick = () => { ws.stop(); npPlay.textContent = 'Play'; };
+      npCopy.onclick = () => copyLink(anchor);
+      history.replaceState(null, '', anchor);
+    }
+
+    function togglePlay(ws, title, anchor) {
+      // Pause any other
+      surfers.forEach(other => { if (other !== ws) other.pause(); });
+      ws.playPause();
+      setNowPlaying(title, ws, anchor);
+    }
+
+    async function copyLink(anchor) {
+      const url = location.origin + location.pathname + anchor;
+      try {
+        await navigator.clipboard.writeText(url);
+        npTitle.textContent = `${current.title} — link copied`;
+        setTimeout(() => npTitle.textContent = current.title, 1200);
+      } catch (e) {
+        alert('Copy failed. You can manually copy this link:\n' + url);
+      }
+    }
+
+    // If page opened with a hash, ensure that card instantiates when reached
+    if (location.hash) {
+      const target = document.querySelector(location.hash);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  </script>
+</body>
+</html>
