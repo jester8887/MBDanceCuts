@@ -59,7 +59,6 @@
   <script src="https://unpkg.com/wavesurfer.js@7"></script>
 
   <script>
-    // Helper to force Dropbox direct stream
     const toRaw = (u) => {
       try {
         const url = new URL(u);
@@ -89,7 +88,6 @@
 
     const list = document.getElementById('list');
 
-    // Build cards
     tracks.forEach((t, i) => {
       const card = document.createElement('section');
       card.className = 'card';
@@ -101,7 +99,6 @@
           </div>
           <div class="meta">
             <button class="btn" id="play-${i}">Play</button>
-            <button class="btn" id="copy-${i}" title="Copy link">Copy link</button>
           </div>
         </div>
         <div class="wave" id="wave-${i}"></div>
@@ -112,10 +109,8 @@
       list.appendChild(card);
     });
 
-    // Init Plyr for native controls
     const plyrPlayers = Plyr.setup('.js-player');
 
-    // Init WaveSurfer instances
     const surfers = tracks.map((t, i) => {
       const ws = WaveSurfer.create({
         container: `#wave-${i}`,
@@ -132,18 +127,10 @@
       const audioEl = document.getElementById(`audio-${i}`);
       const btn = document.getElementById(`play-${i}`);
       const durEl = document.getElementById(`dur-${i}`);
-      const copyBtn = document.getElementById(`copy-${i}`);
 
-      // Keep Plyr and WaveSurfer in sync
       ws.on('ready', () => {
         const d = ws.getDuration();
         if (isFinite(d)) durEl.textContent = formatTime(d);
-      });
-
-      ws.on('timeupdate', (tSec) => {
-        // Update play button label
-        if (ws.isPlaying()) btn.textContent = 'Pause';
-        else btn.textContent = 'Play';
       });
 
       ws.on('play', () => btn.textContent = 'Pause');
@@ -151,7 +138,6 @@
 
       btn.addEventListener('click', () => ws.playPause());
 
-      // Seek when user interacts with the native control too
       audioEl.addEventListener('play', () => {
         if (!ws.isPlaying()) ws.play();
       });
@@ -160,17 +146,6 @@
       });
       audioEl.addEventListener('seeked', () => {
         ws.setTime(audioEl.currentTime || 0);
-      });
-
-      copyBtn.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(t.url);
-          copyBtn.textContent = 'Copied';
-          setTimeout(() => copyBtn.textContent = 'Copy link', 1200);
-        } catch {
-          copyBtn.textContent = 'Failed';
-          setTimeout(() => copyBtn.textContent = 'Copy link', 1200);
-        }
       });
 
       return ws;
