@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG99TYH350"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-CG99TYH350');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marc Beth • Mixes</title>
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Wavesurfer + Timeline plugin (CDN) -->
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
+  <style>
+    .card { background: white; border-radius: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.08); padding: 1rem; border: 1px solid #f3f4f6; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 500; border: 1px solid #d1d5db; background: white; cursor: pointer; }
+    .btn:hover { background: #f9fafb; }
+    .btn:active { background: #f3f4f6; }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: black; color: white; border: none; }
+    .btn-primary:hover { background: #111827; }
+    .wave { height: 64px; }
+    .timeline { height: 18px; font-size: 10px; color: #6b7280; }
+    .sticky-player { backdrop-filter: blur(8px); }
+    .sr-only-focusable:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <a href="#main" class="sr-only sr-only-focusable">Skip to content</a>
+
+  <header class="max-w-6xl mx-auto px-4 pt-10 pb-6">
+    <h1 class="text-3xl font-bold tracking-tight">Production Mixes and Shorter Themed Mixes</h1>
+    <p class="mt-2 text-sm text-gray-600">Waveform previews, lazy loading, and a sticky Now Playing bar. Audio hosted on Dropbox / GitHub Releases. Preload is off for speed.</p>
+  </header>
+
+  <main id="main" class="max-w-6xl mx-auto px-4 pb-28">
+    <!-- Filters -->
+    <section class="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      <div class="flex gap-2 flex-wrap">
+        <button data-filter="all" class="btn btn-primary" aria-pressed="true">All</button>
+        <button data-filter="Shorter" class="btn">Shorter Themed Mixes</button>
+        <button data-filter="Production" class="btn">Production Mixes</button>
+      </div>
+      <div class="sm:ml-auto w-full sm:w-72">
+        <label class="block text-xs text-gray-500 mb-1" for="search">Search titles</label>
+        <input id="search" type="search" placeholder="Type to filter..." class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+      </div>
+    </section>
+
+    <!-- Sections -->
+    <section id="section-Shorter" class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Shorter Themed Mixes</h2>
+      <div id="grid-Shorter" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+
+    <section id="section-Production" class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Production Mixes</h2>
+      <div id="grid-Production" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+  </main>
+
+  <!-- Sticky Now Playing Bar -->
+  <div id="nowPlaying" class="sticky bottom-0 inset-x-0 border-t border-gray-200 bg-white/90 sticky-player">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <button id="npPlay" class="btn btn-primary" aria-label="Play or pause" disabled>Play</button>
+      <div class="flex-1 min-w-0">
+        <div id="npTitle" class="truncate font-medium">Nothing playing</div>
+        <div class="mt-1">
+          <input id="npSeek" type="range" min="0" max="100" value="0" class="w-full" aria-label="Seek" disabled />
+          <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <span id="npTime">0:00</span>
+            <span id="npDur">0:00</span>
+          </div>
+        </div>
+      </div>
+      <button id="npStop" class="btn" aria-label="Stop" disabled>Stop</button>
+      <button id="npCopy" class="btn" aria-label="Copy link" disabled>Share</button>
+    </div>
+  </div>
+
+  <script>
+    // ---------------------------
+    // Config
+    // ---------------------------
+    const DATA_URL = 'mixes.json'; // put this file next to index.html
+
+    // Convert Dropbox share links to direct streamable links
+    function toDirect(url) {
+      if (url.includes('dl=0')) return url.replace('dl=0', 'raw=1');
+      if (!url.includes('raw=1') && url.includes('dropbox.com')) return url + (url.includes('?') ? '&' : '?') + 'raw=1';
+      return url;
+    }
+
+    // Slug helper for anchors
+    function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
+
+    // Tiny DOM helper
+    const el = (tag, props = {}, children = []) => { const n = document.createElement(tag); Object.assign(n, props); for (const c of children) n.append(c); return n; };
+
+    // Render targets
+    const grids = { Shorter: document.getElementById('grid-Shorter'), Production: document.getElementById('grid-Production') };
+    const observers = new Map();
+    const surfers = new Map();
+    const audios = new Map();
+    let current = { ws: null, audio: null, title: '', anchor: '' };
+
+    function formatTime(s){ const m=Math.floor(s/60)||0, sec=Math.floor(s%60)||0; return `${m}:${sec.toString().padStart(2,'0')}`; }
+
+    function makeCard([title, url, group]) {
+      const anchor = slugify(title);
+      const cardId = `card-${anchor}`;
+
+      const card = el('article', { className: 'card', id: cardId });
+      const header = el('div', { className: 'flex items-start gap-3' });
+      const playBtn = el('button', { className: 'btn btn-primary', innerText: 'Play', disabled: true });
+      const shareBtn = el('button', { className: 'btn', innerText: 'Share' });
+      const titleEl = el('h3', { className: 'font-semibold text-lg flex-1 truncate', innerText: title });
+      header.append(playBtn, titleEl, shareBtn);
+
+      const waveWrap = el('div', { className: 'mt-3' });
+      const wave = el('div', { className: 'wave', id: `wave-${anchor}` });
+      const timeline = el('div', { className: 'timeline', id: `timeline-${anchor}` });
+      waveWrap.append(wave, timeline);
+
+      const audio = el('audio', { src: toDirect(url), preload: 'none' });
+      audio.style.display = 'none';
+
+      const footer = el('div', { className: 'mt-3 flex items-center justify-between text-sm text-gray-500' }, [ el('span', { innerText: group }), el('span', { innerText: 'Idle' }) ]);
+      card.append(header, waveWrap, audio, footer);
+
+      const obs = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue; obs.disconnect();
+          try {
+            const ws = WaveSurfer.create({
+              container: wave,
+              height: 64,
+              waveColor: '#cbd5e1', progressColor: '#0f172a', cursorColor: '#475569',
+              interact: true, dragToSeek: true, minPxPerSec: 50,
+              media: audio,
+            });
+            ws.registerPlugin(WaveSurfer.Timeline.create({ container: timeline }));
+
+            surfers.set(cardId, ws); audios.set(cardId, audio); playBtn.disabled = false;
+
+            const onReady = () => { const d = audio.duration || ws.getDuration?.() || 0; footer.lastChild.textContent = d ? `Loaded • ${formatTime(d)}` : 'Loaded'; };
+            audio.addEventListener('loadedmetadata', onReady, { once: true }); ws.on('ready', onReady);
+
+            // Fallback to simple progress bar if no canvas draws (CORS)
+            setTimeout(() => {
+              const hasCanvas = wave.querySelector('canvas, svg');
+              if (!hasCanvas) {
+                try { ws.destroy(); } catch {}
+                const bar = document.createElement('div'); bar.className = 'mt-2 h-2 w-full bg-gray-200 rounded';
+                const fill = document.createElement('div'); fill.className = 'h-2 bg-gray-900 rounded'; fill.style.width = '0%';
+                bar.appendChild(fill); wave.replaceWith(bar); timeline.remove();
+                const updateBar = () => { const dur = audio.duration || 0, cur = audio.currentTime || 0; fill.style.width = (dur ? (cur/dur)*100 : 0) + '%'; };
+                audio.addEventListener('timeupdate', updateBar); audio.addEventListener('loadedmetadata', updateBar);
+                footer.lastChild.textContent = 'Using basic progress bar';
+              }
+            }, 1200);
+
+            ws.on('play', () => { playBtn.textContent = 'Pause'; footer.lastChild.textContent = 'Playing'; setNowPlaying(title, ws, audio, `#${anchor}`); });
+            ws.on('pause', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Paused'; });
+            ws.on('finish', () => { playBtn.textContent = 'Play'; footer.lastChild.textContent = 'Finished'; if (current.ws === ws) npPlay.textContent = 'Play'; });
+
+            playBtn.addEventListener('click', () => togglePlay(ws, audio, title, `#${anchor}`));
+            shareBtn.addEventListener('click', () => copyLink(`#${anchor}`));
+
+            if (location.hash === `#${anchor}`) {
+              setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); togglePlay(ws, audio, title, `#${anchor}`); }, 250);
+            }
+          } catch (e) {
+            waveWrap.remove(); audio.style.display = ''; audio.controls = true; playBtn.remove();
+            shareBtn.addEventListener('click', () => copyLink(`#${anchor}`)); footer.lastChild.textContent = 'Fallback player ready';
+          }
+        }
+      }, { rootMargin: '200px' });
+
+      obs.observe(card); observers.set(cardId, obs); card.prepend(el('a', { id: anchor }));
+      return card;
+    }
+
+    // Filters
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    let activeFilter = 'all';
+    filterButtons.forEach(btn => { btn.addEventListener('click', () => { filterButtons.forEach(b => b.classList.remove('btn-primary')); btn.classList.add('btn-primary'); activeFilter = btn.dataset.filter; applyFilters(); }); });
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', applyFilters);
+    function applyFilters(){ const q=searchInput.value.trim().toLowerCase(); document.querySelectorAll('article.card').forEach(card=>{ const title=card.querySelector('h3').textContent.toLowerCase(); const group=card.querySelector('span').textContent; const matchText=!q||title.includes(q); const matchGroup=activeFilter==='all'||activeFilter===group; card.style.display=matchText&&matchGroup?'':'none'; }); }
+
+    // Now Playing
+    const npTitle = document.getElementById('npTitle');
+    const npPlay = document.getElementById('npPlay');
+    const npStop = document.getElementById('npStop');
+    const npSeek = document.getElementById('npSeek');
+    const npTime = document.getElementById('npTime');
+    const npDur = document.getElementById('npDur');
+    const npCopy = document.getElementById('npCopy');
+
+    function setNowPlaying(title, ws, audio, anchor){
+      current = { ws, audio, title, anchor };
+      npTitle.textContent = title;
+      npPlay.disabled = npStop.disabled = npSeek.disabled = npCopy.disabled = false;
+      npPlay.textContent = audio.paused ? 'Play' : 'Pause';
+      npDur.textContent = formatTime(audio.duration || (ws&&ws.getDuration&&ws.getDuration()) || 0);
+      const updateSeek = () => { const dur = audio.duration || 0; const cur = audio.currentTime || 0; npSeek.value = dur ? Math.floor((cur/dur)*100) : 0; npTime.textContent = formatTime(cur); };
+      audio.addEventListener('timeupdate', updateSeek); audio.addEventListener('loadedmetadata', updateSeek);
+      npSeek.oninput = (e)=>{ const pct=Number(e.target.value)/100; const dur=audio.duration||0; if(dur) audio.currentTime = pct*dur; };
+      npPlay.onclick = () => togglePlay(ws, audio, title, anchor);
+      npStop.onclick = () => { audio.pause(); audio.currentTime = 0; npPlay.textContent = 'Play'; };
+      npCopy.onclick = () => copyLink(anchor);
+      history.replaceState(null, '', anchor);
+    }
+
+    function togglePlay(ws, audio, title, anchor){
+      audios.forEach(a => { if (a !== audio) a.pause(); }); surfers.forEach(other => { if (other !== ws && other.pause) other.pause(); });
+      if (audio.paused) audio.play(); else audio.pause(); setNowPlaying(title, ws, audio, anchor);
+    }
+
+    async function copyLink(anchor){
+      const url = location.origin + location.pathname + anchor;
+      try { await navigator.clipboard.writeText(url); npTitle.textContent = `${current.title} — link copied`; setTimeout(() => npTitle.textContent = current.title, 1200); }
+      catch (e) { alert('Copy failed. You can manually copy this link:\n' + url); }
+    }
+
+    // ---------------------------
+    // Load mixes.json and render
+    // ---------------------------
+    (async function loadAndRender(){
+      try{
+        const cacheBust = new Date().toISOString().slice(0,10); // daily
+        const res = await fetch(`${DATA_URL}?v=${cacheBust}`);
+        if(!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
+        const data = await res.json(); // expecting [{title, url, group}]
+
+        // Normalize to the tuple format used by makeCard
+        const mixes = data.map(({title, url, group}) => [title, url, group]);
+        mixes.forEach(mix => { const card = makeCard(mix); const group = mix[2]; if (grids[group]) grids[group].append(card); });
+
+        applyFilters();
+      } catch(err){
+        console.error(err);
+        const msg = document.createElement('p');
+        msg.className = 'text-sm text-red-600';
+        msg.textContent = 'Could not load mixes.json — make sure the file exists next to this page, with valid JSON.';
+        document.getElementById('section-Shorter').appendChild(msg);
+      }
+    })();
+
+    // If opened with a hash, scroll to it so the lazy loader spins up that card
+    if (location.hash) { const target = document.querySelector(location.hash); if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  </script>
+</body>
+</html>
