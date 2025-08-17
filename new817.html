@@ -46,10 +46,10 @@
       margin-top: 10px;
     }
     .dur { font-variant-numeric: tabular-nums; }
-    /* Invisible overlay to swallow right-click on the waveform area */
-    .no-rightclick {
-      position:absolute; inset:0; background:transparent;
-    }
+    .no-rightclick { position:absolute; inset:0; background:transparent; }
+    footer { text-align:center; margin:40px 0; font-size:15px; }
+    footer a { color:#0077cc; text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
   </style>
 </head>
 <body>
@@ -59,6 +59,10 @@
   </header>
 
   <div class="wrap" id="list"></div>
+
+  <footer>
+    <a href="https://jester8887.github.io/MBDanceCuts/testnew.html">View the rest of my mixes here!</a>
+  </footer>
 
   <link rel="preconnect" href="https://unpkg.com">
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
@@ -101,7 +105,6 @@
       list.appendChild(card);
       const audioEl = card.querySelector(`#audio-${i}`);
       audioEl.src = t.url;
-      // Right-click and drag deterrents on audio element
       ['contextmenu','dragstart','mousedown','pointerdown'].forEach(evt => {
         audioEl.addEventListener(evt, e => {
           if (evt === 'contextmenu' || e.button === 2) e.preventDefault();
@@ -142,7 +145,6 @@
       audioEl.addEventListener('pause', () => { if (ws.isPlaying()) ws.pause(); });
       audioEl.addEventListener('seeked', () => ws.setTime(audioEl.currentTime || 0));
 
-      // Block right-click on the waveform overlay too
       const overlay = document.querySelector(`#wave-${i} .no-rightclick`);
       ['contextmenu','dragstart','mousedown','pointerdown'].forEach(evt => {
         overlay.addEventListener(evt, e => { if (evt === 'contextmenu' || e.button === 2) e.preventDefault(); }, { passive:false });
@@ -151,7 +153,6 @@
       return ws;
     });
 
-    // Global fallback: block context menu anywhere inside the list
     document.getElementById('list').addEventListener('contextmenu', e => e.preventDefault());
 
     function formatTime(sec) {
