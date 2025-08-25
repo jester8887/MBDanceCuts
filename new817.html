@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG99TYH350"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-CG99TYH350');
-</script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG99TYH350');
+  </script>
   <meta charset="UTF-8" />
   <title>Mixes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -87,7 +86,8 @@
 
     const tracks = [
       { title: "Lil Wayne Mix", url: "https://www.dropbox.com/scl/fi/pn79lu7o1kax37q7hjitm/Lil-Wayne-Mix-V1.mp3?rlkey=s9itecx47q6t2f1ds0eu7it9j&st=cdd8amlk&dl=0" },
-      { title: "Pitbull Mix",   url: "https://www.dropbox.com/scl/fi/kvo90llehckwgyznmxwuk/Pitbull-MZ-V2-2m53s.mp3?rlkey=iev6g8ozgr5hzgtf9q8wql4ck&st=db7q2olz&dl=0" }
+      { title: "Pitbull Mix",   url: "https://www.dropbox.com/scl/fi/kvo90llehckwgyznmxwuk/Pitbull-MZ-V2-2m53s.mp3?rlkey=iev6g8ozgr5hzgtf9q8wql4ck&st=db7q2olz&dl=0" },
+      { title: "KPop Demon Hunters Mix", url: "https://www.dropbox.com/scl/fi/5gb1rw78huwcode6a38ao/KPop-Demon-Hunters-Mix-2-MGB.mp3?rlkey=1kyrv79rxjp2rcd3qjboj1yuu&st=mb6akim1&dl=0" }
     ].map(t => ({ ...t, url: toRaw(t.url) }));
 
     const list = document.getElementById('list');
