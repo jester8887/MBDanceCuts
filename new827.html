@@ -95,15 +95,19 @@
 
   <link rel="preconnect" href="https://unpkg.com">
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-  <script src="https://unpkg.com/wavesurfer.js@7"></script>
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
 
   <script>
-    const toRaw = (u) => {
+    // Force Dropbox links to stream (dl=1)
+    const toDirect = (u) => {
       try {
         const url = new URL(u);
-        url.searchParams.set('raw', '1');
+        url.searchParams.set('dl', '1');
+        url.searchParams.delete('raw');
         return url.toString();
-      } catch { return u; }
+      } catch {
+        return u;
+      }
     };
 
     const tracks = [
@@ -111,10 +115,11 @@
       { title: "Pitbull Mix $35",   url: "https://www.dropbox.com/scl/fi/kvo90llehckwgyznmxwuk/Pitbull-MZ-V2-2m53s.mp3?rlkey=iev6g8ozgr5hzgtf9q8wql4ck&st=db7q2olz&dl=0" },
       { title: "KPop Demon Hunters Mix INTRO SPECIAL $30 - Limited", url: "https://www.dropbox.com/scl/fi/5gb1rw78huwcode6a38ao/KPop-Demon-Hunters-Mix-2-MGB.mp3?rlkey=1kyrv79rxjp2rcd3qjboj1yuu&st=mb6akim1&dl=0" },
       { title: "KPop Demon Hunters Mix 2 (Shorter)", url: "https://www.dropbox.com/scl/fi/cps44yp2n8wcdq05o42t4/KPop-Demon-Hunters-Mix-3-MGB.mp3?rlkey=9txypngmkgkmqe7at7ubvudxf&st=yogubhrj&dl=0" }
-    ].map(t => ({ ...t, url: toRaw(t.url) }));
+    ].map(t => ({ ...t, url: toDirect(t.url) }));
 
     const list = document.getElementById('list');
 
+    // Render cards
     tracks.forEach((t, i) => {
       const card = document.createElement('section');
       card.className = 'card';
@@ -122,20 +127,24 @@
         <div class="row">
           <div>
             <div class="title">${t.title}</div>
-            <div class="sub"><span class="dur" id="dur-\${i}">--:--</span></div>
+            <div class="sub"><span class="dur" id="dur-${i}">--:--</span></div>
           </div>
           <div class="meta">
-            <button class="btn" id="play-\${i}">Play</button>
+            <button class="btn" id="play-${i}">Play</button>
           </div>
         </div>
-        <div class="wave" id="wave-\${i}">
+        <div class="wave" id="wave-${i}">
           <div class="no-rightclick"></div>
         </div>
-        <audio class="audio js-player" id="audio-\${i}" preload="metadata" controls controlsList="nodownload"></audio>
+        <audio class="audio js-player" id="audio-${i}" preload="metadata" controls controlsList="nodownload"></audio>
       `;
       list.appendChild(card);
-      const audioEl = card.querySelector(\`#audio-\${i}\`);
+
+      // Set audio src
+      const audioEl = document.getElementById(`audio-${i}`);
       audioEl.src = t.url;
+
+      // Disable right-click/save
       ['contextmenu','dragstart','mousedown','pointerdown'].forEach(evt => {
         audioEl.addEventListener(evt, e => {
           if (evt === 'contextmenu' || e.button === 2) e.preventDefault();
@@ -143,11 +152,13 @@
       });
     });
 
+    // Plyr controls
     const plyrPlayers = Plyr.setup('.js-player', { controls: ['play','progress','current-time','mute','volume'] });
 
+    // WaveSurfer waveforms
     const surfers = tracks.map((t, i) => {
       const ws = WaveSurfer.create({
-        container: \`#wave-\${i}\`,
+        container: `#wave-${i}`,
         url: t.url,
         height: 84,
         minPxPerSec: 80,
@@ -158,9 +169,9 @@
         interact: true
       });
 
-      const audioEl = document.getElementById(\`audio-\${i}\`);
-      const btn = document.getElementById(\`play-\${i}\`);
-      const durEl = document.getElementById(\`dur-\${i}\`);
+      const audioEl = document.getElementById(`audio-${i}`);
+      const btn = document.getElementById(`play-${i}`);
+      const durEl = document.getElementById(`dur-${i}`);
 
       ws.on('ready', () => {
         const d = ws.getDuration();
@@ -176,7 +187,7 @@
       audioEl.addEventListener('pause', () => { if (ws.isPlaying()) ws.pause(); });
       audioEl.addEventListener('seeked', () => ws.setTime(audioEl.currentTime || 0));
 
-      const overlay = document.querySelector(\`#wave-\${i} .no-rightclick\`);
+      const overlay = document.querySelector(`#wave-${i} .no-rightclick`);
       ['contextmenu','dragstart','mousedown','pointerdown'].forEach(evt => {
         overlay.addEventListener(evt, e => { if (evt === 'contextmenu' || e.button === 2) e.preventDefault(); }, { passive:false });
       });
@@ -189,7 +200,7 @@
     function formatTime(sec) {
       const s = Math.floor(sec % 60).toString().padStart(2, '0');
       const m = Math.floor(sec / 60).toString();
-      return \`\${m}:\${s}\`;
+      return `${m}:${s}`;
     }
   </script>
 </body>
