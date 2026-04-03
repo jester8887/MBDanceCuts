@@ -465,18 +465,17 @@
       setNowPlaying(title, ws, audio, anchor);
     }
 
-    async function copyLink(anchor) {
-      const url = location.origin + location.pathname + anchor;
-      try {
-        await navigator.clipboard.writeText(url);
-        const prior = npTitle.textContent;
-        npTitle.textContent = `${current.title || 'Track'} — link copied`;
-        setTimeout(() => { npTitle.textContent = prior; }, 1200);
-      } catch (error) {
-        alert('Copy failed. You can manually copy this link:
-' + url);
-      }
-    }
+async function copyLink(anchor) {
+  const url = location.origin + location.pathname + anchor;
+  try {
+    await navigator.clipboard.writeText(url);
+    const prior = npTitle.textContent;
+    npTitle.textContent = `${current.title || 'Track'} — link copied`;
+    setTimeout(() => { npTitle.textContent = prior; }, 1200);
+  } catch (error) {
+    alert('Copy failed. You can manually copy this link:\n' + url);
+  }
+}
 
     function buildDisplayTitle(title, length, songs, displayTitle) {
       if (displayTitle) return displayTitle;
