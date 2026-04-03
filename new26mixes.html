@@ -380,7 +380,6 @@
         </div>
       </div>
       <button id="npStop" class="btn" aria-label="Stop" disabled>Stop</button>
-      <button id="npCopy" class="btn" aria-label="Copy link" disabled>Share</button>
     </div>
   </div>
 
@@ -416,7 +415,6 @@
     const npSeek = document.getElementById('npSeek');
     const npTime = document.getElementById('npTime');
     const npDur = document.getElementById('npDur');
-    const npCopy = document.getElementById('npCopy');
 
     function formatTime(seconds) {
       const m = Math.floor(seconds / 60) || 0;
@@ -430,7 +428,6 @@
       npPlay.disabled = false;
       npStop.disabled = false;
       npSeek.disabled = false;
-      npCopy.disabled = false;
       npPlay.textContent = audio.paused ? 'Play' : 'Pause';
       npDur.textContent = formatTime(audio.duration || (ws && ws.getDuration && ws.getDuration()) || 0);
 
@@ -454,7 +451,6 @@
         audio.currentTime = 0;
         npPlay.textContent = 'Play';
       };
-      npCopy.onclick = () => copyLink(anchor);
       history.replaceState(null, '', anchor);
     }
 
@@ -464,18 +460,6 @@
       if (audio.paused) audio.play(); else audio.pause();
       setNowPlaying(title, ws, audio, anchor);
     }
-
-async function copyLink(anchor) {
-  const url = location.origin + location.pathname + anchor;
-  try {
-    await navigator.clipboard.writeText(url);
-    const prior = npTitle.textContent;
-    npTitle.textContent = `${current.title || 'Track'} — link copied`;
-    setTimeout(() => { npTitle.textContent = prior; }, 1200);
-  } catch (error) {
-    alert('Copy failed. You can manually copy this link:\n' + url);
-  }
-}
 
     function buildDisplayTitle(title, length, songs, displayTitle) {
       if (displayTitle) return displayTitle;
@@ -497,8 +481,7 @@ async function copyLink(anchor) {
 
       const controls = el('div', { className: 'flex gap-2 flex-wrap' });
       const playBtn = el('button', { className: 'btn btn-primary', innerText: 'Play', disabled: true });
-      const shareBtn = el('button', { className: 'btn', innerText: 'Share' });
-      controls.append(playBtn, shareBtn);
+      controls.append(playBtn);
       header.append(titleWrap, controls);
 
       const waveWrap = el('div');
@@ -588,7 +571,6 @@ async function copyLink(anchor) {
             });
 
             playBtn.addEventListener('click', () => togglePlay(ws, audio, title, `#${anchor}`));
-            shareBtn.addEventListener('click', () => copyLink(`#${anchor}`));
 
             if (location.hash === `#${anchor}`) {
               setTimeout(() => {
@@ -601,7 +583,6 @@ async function copyLink(anchor) {
             audio.style.display = '';
             audio.controls = true;
             playBtn.remove();
-            shareBtn.addEventListener('click', () => copyLink(`#${anchor}`));
             footer.lastChild.textContent = 'Fallback player ready';
           }
         }
