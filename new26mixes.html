@@ -476,8 +476,7 @@
       const header = el('div', { className: 'mix-header' });
       const titleWrap = el('div');
       const titleEl = el('h3', { className: 'mix-title', innerText: title });
-      const metaEl = el('div', { className: 'mix-meta', innerText: group || 'New Mix' });
-      titleWrap.append(titleEl, metaEl);
+      titleWrap.append(titleEl);
 
       const controls = el('div', { className: 'flex gap-2 flex-wrap' });
       const playBtn = el('button', { className: 'btn btn-primary', innerText: 'Play', disabled: true });
@@ -493,9 +492,8 @@
       audio.style.display = 'none';
 
       const footer = el('div', {
-        className: 'mt-3 flex items-center justify-between text-sm text-zinc-500'
+        className: 'mt-3 flex items-center justify-end text-sm text-zinc-500'
       }, [
-        el('span', { innerText: group || 'Mix' }),
         el('span', { innerText: 'Idle' })
       ]);
 
@@ -551,7 +549,6 @@
                 };
                 audio.addEventListener('timeupdate', updateBar);
                 audio.addEventListener('loadedmetadata', updateBar);
-                footer.lastChild.textContent = 'Using basic progress bar';
               }
             }, 1200);
 
