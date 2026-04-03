@@ -605,24 +605,28 @@
       return card;
     }
 
-    (async function loadAndRender() {
-      try {
-        const cacheBust = new Date().toISOString().slice(0, 10);
-        const res = await fetch(`${DATA_URL}?v=${cacheBust}`);
-        if (!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
-        const data = await res.json();
-        const mixes = data.map(({ title, url, group }) => [title, url, group]);
-        mixes.forEach((mix) => {
-          mixList.append(makeCard(mix));
-        });
-      } catch (error) {
-        console.error(error);
-        const msg = document.createElement('p');
-        msg.className = 'text-sm text-red-700';
-        msg.textContent = 'Could not load mixes.json. Make sure the file exists next to this page and contains valid JSON.';
-        mixList.appendChild(msg);
-      }
-    })();
+(async function loadAndRender() {
+  try {
+    const cacheBust = new Date().toISOString().slice(0, 10);
+    const res = await fetch(`${DATA_URL}?v=${cacheBust}`);
+    if (!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
+    const data = await res.json();
+    const mixes = (data.new || []).map(({ title, url, length, songs, displayTitle }) => [
+      displayTitle || `${title} (${length}) — ${songs}`,
+      url,
+      'New Mix'
+    ]);
+    mixes.forEach((mix) => {
+      mixList.append(makeCard(mix));
+    });
+  } catch (error) {
+    console.error(error);
+    const msg = document.createElement('p');
+    msg.className = 'text-sm text-red-700';
+    msg.textContent = 'Could not load json/new26new.json. Make sure the file exists and contains valid JSON.';
+    mixList.appendChild(msg);
+  }
+})();
 
     if (location.hash) {
       const target = document.querySelector(location.hash);
