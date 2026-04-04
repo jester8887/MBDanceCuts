@@ -17,102 +17,299 @@
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Wavesurfer -->
+  <!-- Wavesurfer + Timeline plugin -->
   <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
   <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      background: #e9e9e9;
-      font-family: Arial, Helvetica, sans-serif;
-      -webkit-font-smoothing: antialiased;
+    :root {
+      --page-bg: #e9e9e9;
+      --card-bg: #ffffff;
+      --text: #000000;
+      --muted: #3f3f46;
+      --border: #d4d4d8;
     }
 
-    .wrap {
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .page-wrap {
       max-width: 1320px;
       margin: 0 auto;
       padding: 28px 20px 150px;
     }
 
-    .hero-img {
+    .hero-image {
       width: 100%;
-      height: 260px;
+      max-width: 360px;
+      aspect-ratio: 1 / 1;
       object-fit: cover;
-      border-radius: 10px;
-      margin-bottom: 20px;
+      object-position: center;
+      display: block;
+      border-radius: 8px;
+      margin-bottom: 24px;
     }
 
     .headline {
-      font-family: Arial Black, Impact, sans-serif;
-      font-size: clamp(4rem, 8vw, 7rem);
+      font-family: Arial Black, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.04em;
       line-height: 0.9;
       text-transform: uppercase;
-      margin: 0 0 10px;
+      margin: 0 0 14px;
+      font-size: clamp(4rem, 8vw, 7rem);
+      text-wrap: balance;
     }
 
-    .sub {
-      font-size: 1.1rem;
-      max-width: 700px;
-      margin-bottom: 30px;
+    .subcopy {
+      margin: 0 0 34px;
+      font-size: clamp(1rem, 1.15vw, 1.18rem);
+      color: #222;
+      max-width: 840px;
+      line-height: 1.35;
     }
 
-    .player {
+    .subcopy a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 2px solid #000;
+    }
+
+    .player-grid {
       display: grid;
-      gap: 20px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
     }
 
-    .card {
-      background: white;
-      padding: 24px;
+    .mix-card {
+      background: var(--card-bg);
+      border: 1px solid #f1f1f1;
       border-radius: 24px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-      transition: all 0.2s ease;
+      padding: 22px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .card:hover {
+    .mix-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+      border-color: #e8e8e8;
     }
 
-    .title {
-      font-size: 1.3rem;
+    .mix-header {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .mix-title {
+      margin: 0;
+      font-size: 1.18rem;
       font-weight: 700;
-      margin-bottom: 14px;
+      line-height: 1.22;
+      letter-spacing: -0.01em;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .btn {
-      padding: 0.5rem 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.85rem;
       border-radius: 999px;
-      border: 1px solid #ccc;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border: 1px solid #d4d4d8;
+      background: #fff;
+      color: #111;
       cursor: pointer;
-      background: white;
+      text-decoration: none;
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      min-width: 84px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      flex-shrink: 0;
     }
 
-    .btn-primary {
-      background: black;
-      color: white;
+    .btn:hover { background: #f5f5f5; }
+    .btn:active { transform: translateY(1px); }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+    .btn-primary { background: #000; color: #fff; border-color: #000; }
+    .btn-primary:hover { background: #111; box-shadow: 0 4px 10px rgba(0,0,0,0.14); }
+
+    .wave-wrap {
+      margin-top: auto;
     }
 
-    .wave { height: 70px; }
+    .wave {
+      height: 74px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .timeline {
+      height: 20px;
+      font-size: 10px;
+      color: #71717a;
+      margin-top: 2px;
+    }
+
+    .mix-status {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 0.84rem;
+      color: #666;
+      letter-spacing: 0.01em;
+    }
+
+    .sticky-player {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-top: 1px solid #d4d4d8;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      box-shadow: 0 -3px 14px rgba(0,0,0,0.06);
+    }
+
+    .sticky-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sticky-title {
+      font-weight: 700;
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sticky-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sticky-time {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #52525b;
+      margin-top: 2px;
+    }
+
+    .sticky-range {
+      width: 100%;
+    }
+
+    .sr-only-focusable {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+
+    .sr-only-focusable:focus {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+    }
+
+    @media (max-width: 1100px) {
+      .player-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .page-wrap { padding: 18px 14px 160px; }
+      .hero-image {
+        max-width: 100%;
+        margin-bottom: 18px;
+      }
+      .player-grid { grid-template-columns: 1fr; gap: 18px; }
+      .mix-card { padding: 20px; min-height: 280px; }
+      .mix-header {
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .mix-title {
+        font-size: 1.08rem;
+        -webkit-line-clamp: 5;
+      }
+      .sticky-inner {
+        flex-wrap: wrap;
+        align-items: stretch;
+      }
+      .sticky-main {
+        width: 100%;
+        order: 3;
+      }
+    }
   </style>
 </head>
 <body>
-  <main class="wrap">
+  <a href="#main" class="sr-only-focusable">Skip to content</a>
 
-    <img src="images/themed.jpg" class="hero-img" />
+  <main id="main" class="page-wrap">
+    <img src="images/themed.jpg" alt="Themed mixes artwork" class="hero-image" />
 
-    <h1 class="headline">THEMED MIXES</h1>
+    <h1 class="headline">Themed Mixes</h1>
 
-    <p class="sub">
-      These mixes are built on a concept, an era, an idea. Email 
-      <a href="mailto:mbdancecuts@gmail.com">mbdancecuts@gmail.com</a> 
+    <p class="subcopy">
+      These mixes are built on a concept, an era, an idea. Email
+      <a href="mailto:mbdancecuts@gmail.com?subject=Themed%20Mix%20Inquiry">mbdancecuts@gmail.com</a>
       for ordering information or to inquire about a custom mix.
     </p>
 
-    <div id="mixList" class="player"></div>
-
+    <section aria-label="Themed mixes">
+      <div id="mixList" class="player-grid"></div>
+    </section>
   </main>
+
+  <div id="nowPlaying" class="sticky-player" aria-label="Now playing bar">
+    <div class="sticky-inner">
+      <button id="npPlay" class="btn btn-primary" aria-label="Play or pause" disabled>Play</button>
+      <div class="sticky-main">
+        <div id="npTitle" class="sticky-title">Nothing playing</div>
+        <input id="npSeek" class="sticky-range" type="range" min="0" max="100" value="0" aria-label="Seek" disabled />
+        <div class="sticky-time">
+          <span id="npTime">0:00</span>
+          <span id="npDur">0:00</span>
+        </div>
+      </div>
+      <button id="npStop" class="btn" aria-label="Stop" disabled>Stop</button>
+    </div>
+  </div>
 
   <script>
     const DATA_URL = 'json/new26.json';
@@ -123,62 +320,228 @@
       return url;
     }
 
+    function slugify(str) {
+      return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    const el = (tag, props = {}, children = []) => {
+      const node = document.createElement(tag);
+      Object.assign(node, props);
+      for (const child of children) node.append(child);
+      return node;
+    };
+
     const mixList = document.getElementById('mixList');
+    const observers = new Map();
+    const surfers = new Map();
+    const audios = new Map();
+    let current = { ws: null, audio: null, title: '', anchor: '' };
+
+    const npTitle = document.getElementById('npTitle');
+    const npPlay = document.getElementById('npPlay');
+    const npStop = document.getElementById('npStop');
+    const npSeek = document.getElementById('npSeek');
+    const npTime = document.getElementById('npTime');
+    const npDur = document.getElementById('npDur');
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60) || 0;
+      const s = Math.floor(seconds % 60) || 0;
+      return `${m}:${String(s).padStart(2, '0')}`;
+    }
+
+    function setNowPlaying(title, ws, audio, anchor) {
+      current = { ws, audio, title, anchor };
+      npTitle.textContent = title;
+      npPlay.disabled = false;
+      npStop.disabled = false;
+      npSeek.disabled = false;
+      npPlay.textContent = audio.paused ? 'Play' : 'Pause';
+      npDur.textContent = formatTime(audio.duration || (ws && ws.getDuration && ws.getDuration()) || 0);
+
+      const updateSeek = () => {
+        const dur = audio.duration || 0;
+        const cur = audio.currentTime || 0;
+        npSeek.value = dur ? Math.floor((cur / dur) * 100) : 0;
+        npTime.textContent = formatTime(cur);
+      };
+
+      audio.addEventListener('timeupdate', updateSeek);
+      audio.addEventListener('loadedmetadata', updateSeek);
+      npSeek.oninput = (e) => {
+        const pct = Number(e.target.value) / 100;
+        const dur = audio.duration || 0;
+        if (dur) audio.currentTime = pct * dur;
+      };
+      npPlay.onclick = () => togglePlay(ws, audio, title, anchor);
+      npStop.onclick = () => {
+        audio.pause();
+        audio.currentTime = 0;
+        npPlay.textContent = 'Play';
+      };
+      history.replaceState(null, '', anchor);
+    }
+
+    function togglePlay(ws, audio, title, anchor) {
+      audios.forEach((a) => { if (a !== audio) a.pause(); });
+      surfers.forEach((other) => { if (other !== ws && other.pause) other.pause(); });
+      if (audio.paused) audio.play(); else audio.pause();
+      setNowPlaying(title, ws, audio, anchor);
+    }
 
     function buildDisplayTitle(title, length, songs, displayTitle) {
       if (displayTitle) return displayTitle;
-      return `${title} (${length}) — ${songs}`;
+      const safeLength = length ? ` (${length})` : '';
+      const safeSongs = songs ? ` — ${songs}` : '';
+      return `${title}${safeLength}${safeSongs}`;
     }
 
-    function makeCard(title, url) {
-      const card = document.createElement('div');
-      card.className = 'card';
+    function makeCard([title, url]) {
+      const anchor = slugify(title);
+      const cardId = `card-${anchor}`;
 
-      const t = document.createElement('div');
-      t.className = 'title';
-      t.innerText = title;
+      const card = el('article', { className: 'mix-card', id: cardId });
+      const header = el('div', { className: 'mix-header' });
+      const titleWrap = el('div');
+      const titleEl = el('h3', { className: 'mix-title', innerText: title });
+      titleWrap.append(titleEl);
 
-      const btn = document.createElement('button');
-      btn.className = 'btn btn-primary';
-      btn.innerText = 'Play';
+      const controls = el('div');
+      const playBtn = el('button', { className: 'btn btn-primary', innerText: 'Play', disabled: true });
+      controls.append(playBtn);
+      header.append(titleWrap, controls);
 
-      const wave = document.createElement('div');
-      wave.className = 'wave';
+      const waveWrap = el('div', { className: 'wave-wrap' });
+      const wave = el('div', { className: 'wave', id: `wave-${anchor}` });
+      const timeline = el('div', { className: 'timeline', id: `timeline-${anchor}` });
+      waveWrap.append(wave, timeline);
 
-      const audio = document.createElement('audio');
-      audio.src = toDirect(url);
+      const audio = el('audio', { src: toDirect(url), preload: 'none' });
+      audio.style.display = 'none';
 
-      btn.onclick = () => {
-        if (audio.paused) {
-          audio.play();
-          btn.innerText = 'Pause';
-        } else {
-          audio.pause();
-          btn.innerText = 'Play';
+      const footer = el('div', { className: 'mix-status' }, [
+        el('span', { innerText: 'Idle' })
+      ]);
+
+      card.prepend(el('a', { id: anchor }));
+      card.append(header, waveWrap, audio, footer);
+
+      const obs = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          obs.disconnect();
+          try {
+            const ws = WaveSurfer.create({
+              container: wave,
+              height: 74,
+              waveColor: '#d4d4d8',
+              progressColor: '#111111',
+              cursorColor: '#52525b',
+              interact: true,
+              dragToSeek: true,
+              minPxPerSec: 50,
+              media: audio,
+            });
+
+            ws.registerPlugin(WaveSurfer.Timeline.create({ container: timeline }));
+            surfers.set(cardId, ws);
+            audios.set(cardId, audio);
+            playBtn.disabled = false;
+
+            const onReady = () => {
+              const d = audio.duration || ws.getDuration?.() || 0;
+              footer.lastChild.textContent = d ? `Loaded • ${formatTime(d)}` : 'Loaded';
+            };
+
+            audio.addEventListener('loadedmetadata', onReady, { once: true });
+            ws.on('ready', onReady);
+
+            setTimeout(() => {
+              const hasCanvas = wave.querySelector('canvas, svg');
+              if (!hasCanvas) {
+                try { ws.destroy(); } catch (error) {}
+                const bar = document.createElement('div');
+                bar.className = 'mt-2 h-2.5 w-full bg-zinc-200 rounded-full';
+                const fill = document.createElement('div');
+                fill.className = 'h-2.5 bg-black rounded-full';
+                fill.style.width = '0%';
+                bar.appendChild(fill);
+                wave.replaceWith(bar);
+                timeline.remove();
+                const updateBar = () => {
+                  const dur = audio.duration || 0;
+                  const cur = audio.currentTime || 0;
+                  fill.style.width = (dur ? (cur / dur) * 100 : 0) + '%';
+                };
+                audio.addEventListener('timeupdate', updateBar);
+                audio.addEventListener('loadedmetadata', updateBar);
+              }
+            }, 1200);
+
+            ws.on('play', () => {
+              playBtn.textContent = 'Pause';
+              footer.lastChild.textContent = 'Playing';
+              setNowPlaying(title, ws, audio, `#${anchor}`);
+            });
+            ws.on('pause', () => {
+              playBtn.textContent = 'Play';
+              footer.lastChild.textContent = 'Paused';
+            });
+            ws.on('finish', () => {
+              playBtn.textContent = 'Play';
+              footer.lastChild.textContent = 'Finished';
+              if (current.ws === ws) npPlay.textContent = 'Play';
+            });
+
+            playBtn.addEventListener('click', () => togglePlay(ws, audio, title, `#${anchor}`));
+
+            if (location.hash === `#${anchor}`) {
+              setTimeout(() => {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                togglePlay(ws, audio, title, `#${anchor}`);
+              }, 250);
+            }
+          } catch (error) {
+            waveWrap.remove();
+            audio.style.display = '';
+            audio.controls = true;
+            playBtn.remove();
+            footer.lastChild.textContent = 'Ready';
+          }
         }
-      };
+      }, { rootMargin: '200px' });
 
-      card.appendChild(t);
-      card.appendChild(btn);
-      card.appendChild(wave);
-      card.appendChild(audio);
-
+      obs.observe(card);
+      observers.set(cardId, obs);
       return card;
     }
 
-    (async function() {
-      const res = await fetch(DATA_URL);
-      const data = await res.json();
-
-      const mixes = data.themed || [];
-
-      mixes.forEach(m => {
-        const title = buildDisplayTitle(m.title, m.length, m.songs, m.displayTitle);
-        const card = makeCard(title, m.url);
-        mixList.appendChild(card);
-      });
+    (async function loadAndRender() {
+      try {
+        const cacheBust = new Date().toISOString().slice(0, 10);
+        const res = await fetch(`${DATA_URL}?v=${cacheBust}`);
+        if (!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
+        const data = await res.json();
+        const mixes = (data.themed || []).map(({ title, url, length, songs, displayTitle }) => [
+          buildDisplayTitle(title, length, songs, displayTitle),
+          url
+        ]);
+        mixes.forEach((mix) => {
+          mixList.append(makeCard(mix));
+        });
+      } catch (error) {
+        console.error(error);
+        const msg = document.createElement('p');
+        msg.className = 'text-sm text-red-700';
+        msg.textContent = 'Could not load json/new26.json. Make sure the file exists and contains valid JSON.';
+        mixList.appendChild(msg);
+      }
     })();
 
+    if (location.hash) {
+      const target = document.querySelector(location.hash);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   </script>
 </body>
 </html>
