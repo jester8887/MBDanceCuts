@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Themed Mixes</title>
 
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG99TYH350"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} 
+    gtag('js', new Date());
+    gtag('config', 'G-CG99TYH350');
+  </script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Wavesurfer -->
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #e9e9e9;
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 28px 20px 150px;
+    }
+
+    .hero-img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .headline {
+      font-family: Arial Black, Impact, sans-serif;
+      font-size: clamp(4rem, 8vw, 7rem);
+      line-height: 0.9;
+      text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+
+    .sub {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin-bottom: 30px;
+    }
+
+    .player {
+      display: grid;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+    }
+
+    .title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .btn {
+      padding: 0.5rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background: white;
+    }
+
+    .btn-primary {
+      background: black;
+      color: white;
+    }
+
+    .wave { height: 70px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+
+    <img src="images/themed.jpg" class="hero-img" />
+
+    <h1 class="headline">THEMED MIXES</h1>
+
+    <p class="sub">
+      These mixes are built on a concept, an era, an idea. Email 
+      <a href="mailto:mbdancecuts@gmail.com">mbdancecuts@gmail.com</a> 
+      for ordering information or to inquire about a custom mix.
+    </p>
+
+    <div id="mixList" class="player"></div>
+
+  </main>
+
+  <script>
+    const DATA_URL = 'json/new26.json';
+
+    function toDirect(url) {
+      if (url.includes('dl=0')) return url.replace('dl=0', 'raw=1');
+      if (!url.includes('raw=1') && url.includes('dropbox.com')) return url + (url.includes('?') ? '&' : '?') + 'raw=1';
+      return url;
+    }
+
+    const mixList = document.getElementById('mixList');
+
+    function buildDisplayTitle(title, length, songs, displayTitle) {
+      if (displayTitle) return displayTitle;
+      return `${title} (${length}) — ${songs}`;
+    }
+
+    function makeCard(title, url) {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const t = document.createElement('div');
+      t.className = 'title';
+      t.innerText = title;
+
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.innerText = 'Play';
+
+      const wave = document.createElement('div');
+      wave.className = 'wave';
+
+      const audio = document.createElement('audio');
+      audio.src = toDirect(url);
+
+      btn.onclick = () => {
+        if (audio.paused) {
+          audio.play();
+          btn.innerText = 'Pause';
+        } else {
+          audio.pause();
+          btn.innerText = 'Play';
+        }
+      };
+
+      card.appendChild(t);
+      card.appendChild(btn);
+      card.appendChild(wave);
+      card.appendChild(audio);
+
+      return card;
+    }
+
+    (async function() {
+      const res = await fetch(DATA_URL);
+      const data = await res.json();
+
+      const mixes = data.themed || [];
+
+      mixes.forEach(m => {
+        const title = buildDisplayTitle(m.title, m.length, m.songs, m.displayTitle);
+        const card = makeCard(title, m.url);
+        mixList.appendChild(card);
+      });
+    })();
+
+  </script>
+</body>
+</html>
