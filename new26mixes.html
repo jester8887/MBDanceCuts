@@ -25,7 +25,60 @@
       --muted: #3f3f46;
       --border: #d4d4d8;
     }
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #d4d4d8;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
 
+.topbar-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.brand,
+.menu-link {
+  font-family: Arial Black, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  color: #000;
+  line-height: 1;
+}
+
+.brand {
+  font-size: 1.15rem;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.menu-link {
+  font-size: 0.88rem;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+
+.menu-link:hover,
+.menu-link.active {
+  opacity: 1;
+}
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -368,6 +421,19 @@
 <body>
   <a href="#main" class="sr-only-focusable">Skip to content</a>
 
+  <header class="topbar">
+  <div class="topbar-inner">
+    <a href="new26mixes.html" class="brand">MBDANCECUTS</a>
+    <nav class="menu">
+      <a href="new26mixes.html" class="menu-link active">Home</a>
+      <a href="new26themed.html" class="menu-link">Themed</a>
+      <a href="new26artist.html" class="menu-link">Artist</a>
+      <a href="new26hiphop.html" class="menu-link">Hip-Hop</a>
+      <a href="new26production.html" class="menu-link">Production</a>
+      <a href="new26form.html" class="menu-link">Inquiries</a>
+    </nav>
+  </div>
+</header>
   <main id="main" class="page-wrap">
     <section class="top-hero" aria-label="Hero banner">
       <h1 class="mega-headline">
