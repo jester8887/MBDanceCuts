@@ -440,7 +440,7 @@
   </div>
 
   <script>
-    const DATA_URL = 'json/new26.json';
+    const DATA_URL = 'json/new26-2.json';
 
     function toDirect(url) {
       if (url.includes('dl=0')) return url.replace('dl=0', 'raw=1');
@@ -733,7 +733,7 @@
         console.error(error);
         const msg = document.createElement('p');
         msg.className = 'text-sm text-red-700';
-        msg.textContent = 'Could not load json/new26.json. Make sure the file exists and contains valid JSON.';
+        msg.textContent = 'Could not load json/new26-2.json. Make sure the file exists and contains valid JSON.';
         mixList.appendChild(msg);
       }
     })();
