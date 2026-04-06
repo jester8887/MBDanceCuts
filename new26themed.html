@@ -703,30 +703,32 @@
 
     (async function loadAndRender() {
       try {
-        const cacheBust = new Date().toISOString().slice(0, 10);
+        const cacheBust = Date.now();
         const res = await fetch(`${DATA_URL}?v=${cacheBust}`);
         if (!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
         const data = await res.json();
 
-        allMixes = (data.themed || []).map(({ title, url, length, songs, displayTitle, description, category, tags }) => {
-          const finalTitle = buildDisplayTitle(title, length, songs, displayTitle);
-          const searchableParts = [
-            finalTitle,
-            title,
-            length,
-            songs,
-            displayTitle,
-            description,
-            category,
-            Array.isArray(tags) ? tags.join(' ') : tags
-          ].filter(Boolean);
+        allMixes = (Array.isArray(data) ? data : [])
+          .filter((mix) => Array.isArray(mix.categories) && mix.categories.includes('themed'))
+          .map(({ title, audio, length, songs, displayTitle, description, categories, tags }) => {
+            const finalTitle = buildDisplayTitle(title, length, songs, displayTitle);
+            const searchableParts = [
+              finalTitle,
+              title,
+              length,
+              songs,
+              displayTitle,
+              description,
+              ...(Array.isArray(categories) ? categories : []),
+              ...(Array.isArray(tags) ? tags : [tags])
+            ].filter(Boolean);
 
-          return {
-            title: finalTitle,
-            url,
-            searchText: searchableParts.join(' ').toLowerCase()
-          };
-        });
+            return {
+              title: finalTitle,
+              url: audio,
+              searchText: searchableParts.join(' ').toLowerCase()
+            };
+          });
 
         renderMixes(allMixes);
       } catch (error) {
