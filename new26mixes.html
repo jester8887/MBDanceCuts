@@ -880,5 +880,34 @@
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   </script>
+  <script>
+(function () {
+  const TRACKING_URL = "https://script.google.com/macros/s/AKfycbxOwwx7FqgVnSVxURDnuKKeUjEmMqkbogSR5bKaoP-7htQ2oMzxuC-fplcT2ChMiO9J-w/exec";
+
+  const payload = {
+    page: window.location.pathname,
+    fullUrl: window.location.href,
+    title: document.title,
+    referrer: document.referrer || "direct",
+    userAgent: navigator.userAgent,
+    screen: `${window.screen.width}x${window.screen.height}`,
+    language: navigator.language,
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    fetch(TRACKING_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    console.error("Traffic tracking failed:", err);
+  }
+})();
+</script>
 </body>
 </html>
