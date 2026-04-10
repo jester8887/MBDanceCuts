@@ -1,16 +1,12 @@
 [
-  {
+    {
     "title": "1920s Swing Mix",
     "audio": "https://www.dropbox.com/scl/fi/507j8ap995v70et29aaw7/1920s-Mix-V4-2m35s.mp3?rlkey=fwbeooadb63kq37cx7vr1stw0&st=xa9lm8es&dl=0",
-    "categories": [
-      "themed",
-      "new",
-      "featured"
-    ],
-    "featured": true,
+    "categories": ["themed", "new"],
+    "featured": false,
     "length": "2m32s",
     "songs": "Jump Jive n Wail (Brian Setzer), Go Daddy O (Big Bad Voodoo Daddy), Sing Sing Sing (Bebo Best), Party Like its 1920 (Swinghoppers), A Little Party (Fergie)"
-  },
+    },
   {
     "title": "2000s Hip Hop Mix",
     "audio": "https://www.dropbox.com/scl/fi/lkbpcouo0x08n5649bp72/2000s-Mix-V2-2m33s-Cleaner.mp3?rlkey=s4pkczdo39v6edwr74hp07uun&st=2hzyyasu&dl=0",
@@ -526,11 +522,10 @@
   {
     "title": "GloRilla Mix",
     "audio": "https://www.dropbox.com/scl/fi/32b052g1mb564ky9wlsn7/GloRilla-Mix-MGB-2n25s.mp3?rlkey=hgmn0zxpoouqn708ib0t51xa4&st=xcncu73s&dl=0",
-    "categories": [
-      "hiphop",
-      "artist",
-      "new",
-      "featured"
+    "categories": ["hiphop", "artist", "new"],
+    "featured": false,
+    "length": "2m25s",
+    "songs": "Yeah Glo! (GloRilla), TGIF (GloRilla), Let Her Cook (GloRilla), Hollon (GloRilla)"
     ],
     "featured": true,
     "length": "2m25s",
@@ -686,12 +681,8 @@
   {
     "title": "Joker Mix",
     "audio": "https://www.dropbox.com/scl/fi/enhlblvjljw290qmmd8q2/Joker-Mix-1m35.mp3?rlkey=10tgctf6zxh1utkp6qaojlz98&st=j982tjm6&dl=0",
-    "categories": [
-      "themed",
-      "new",
-      "featured"
-    ],
-    "featured": true,
+    "categories": ["themed", "new"],
+    "featured": false,
     "length": "1m35s",
     "songs": "Just Be Good to Me (Professor Green), Batdance (Prince)"
   },
@@ -1239,7 +1230,7 @@
       "hiphop",
       "artist"
     ],
-    "featured": false,
+    "featured": true,
     "length": "2m03s",
     "songs": "Miss Possessive (Tate McRae), Make Me (Just Keep Watching) (Tate McRae)"
   },
@@ -1311,7 +1302,7 @@
     "categories": [
       "themed"
     ],
-    "featured": false,
+    "featured": true,
     "length": "2m23s",
     "songs": "Mario Kart World (Remix), Super Sonic (Remix), Derezzed (Daft Punk), Video Games (Lana Del Rey), Zelda Song of Storms (Remix), We Have Explosive (The Future Sound of London), Mike Tyson’s Punch-Out (Remix)"
   },
