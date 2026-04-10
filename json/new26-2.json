@@ -519,18 +519,14 @@
     "length": "2m23s",
     "songs": "What’s My Name? (Rihanna), Heels (ITZY), The Girls (BLACKPINK)"
   },
-  {
-    "title": "GloRilla Mix",
-    "audio": "https://www.dropbox.com/scl/fi/32b052g1mb564ky9wlsn7/GloRilla-Mix-MGB-2n25s.mp3?rlkey=hgmn0zxpoouqn708ib0t51xa4&st=xcncu73s&dl=0",
-    "categories": ["hiphop", "artist", "new"],
-    "featured": false,
-    "length": "2m25s",
-    "songs": "Yeah Glo! (GloRilla), TGIF (GloRilla), Let Her Cook (GloRilla), Hollon (GloRilla)"
-    ],
-    "featured": true,
-    "length": "2m25s",
-    "songs": "Yeah Glo! (GloRilla), TGIF (GloRilla), Let Her Cook (GloRilla), Hollon (GloRilla)"
-  },
+{
+  "title": "GloRilla Mix",
+  "audio": "https://www.dropbox.com/scl/fi/32b052g1mb564ky9wlsn7/GloRilla-Mix-MGB-2n25s.mp3?rlkey=hgmn0zxpoouqn708ib0t51xa4&st=xcncu73s&dl=0",
+  "categories": ["hiphop", "artist", "new"],
+  "featured": false,
+  "length": "2m25s",
+  "songs": "Yeah Glo! (GloRilla), TGIF (GloRilla), Let Her Cook (GloRilla), Hollon (GloRilla)"
+}
   {
     "title": "Gold Hip Hop",
     "audio": "https://www.dropbox.com/scl/fi/fx5c72m3g1qdvediopmy3/Gold-Mix-V2-1m48s.mp3?rlkey=mlgbln2q3ezi4k3eobmvq0jfu&st=s9fjyz29&dl=0",
@@ -1022,7 +1018,7 @@
     "categories": [
       "themed"
     ],
-    "featured": false,
+    "featured": true,
     "length": "2m22s",
     "songs": "Pon de Replay (Rihanna), Bang Bang (Jessie J), Physical (Dua Lipa), A Little Party Never Killed Nobody (Fergie), Shake Señora (Pitbull)"
   },
