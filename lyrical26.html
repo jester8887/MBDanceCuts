@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lyrical Playlist 2026</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #e9e9e9;
+      color: #000;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.35fr 0.7fr;
+    }
+
+    .left {
+      padding: 40px 34px 36px 34px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-title {
+      font-family: Arial Black, Arial, Helvetica, sans-serif;
+      font-weight: 900;
+      font-size: clamp(4rem, 8vw, 6.8rem);
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      margin: 0 0 36px 0;
+    }
+
+    .feature-box {
+      background: #dddddd;
+      border-radius: 8px;
+      padding: 24px 28px;
+      max-width: 640px;
+      margin-bottom: 56px;
+    }
+
+    .feature-box h2 {
+      margin: 0 0 18px 0;
+      font-family: Arial Black, Arial, Helvetica, sans-serif;
+      font-size: clamp(1.5rem, 2.3vw, 2.2rem);
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+    }
+
+    .feature-box ol {
+      margin: 0;
+      padding-left: 34px;
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .feature-box li {
+      margin-bottom: 2px;
+    }
+
+    .feature-box a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .feature-box a:hover {
+      text-decoration: underline;
+    }
+
+    .bottom-text {
+      margin-top: auto;
+      max-width: 780px;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .bottom-text a {
+      color: #000;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .bottom-text a:hover {
+      text-decoration: underline;
+    }
+
+    .right {
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+
+    .right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .right {
+        min-height: 420px;
+        order: -1;
+      }
+
+      .left {
+        padding: 28px 22px 30px 22px;
+      }
+
+      .feature-box {
+        margin-bottom: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="left">
+      <h1 class="hero-title">
+        LYRICAL<br>
+        DANCE<br>
+        PLAYLIST<br>
+        2026
+      </h1>
+
+      <div class="feature-box">
+        <h2>FEATURED TOP 5 TRACKS</h2>
+        <ol>
+          <li><a href="https://open.spotify.com/track/0WbMK4wrZ1wFSty9F7FCgu?si=9a10e030e6c54022" target="_blank" rel="noopener noreferrer">Good Luck Babe</a>, by Chappell Roan</li>
+          <li><a href="https://open.spotify.com/track/1bjeWoagtHmUKputLVyDxQ?si=20358e599f2a4aa0" target="_blank" rel="noopener noreferrer">Saturn</a>, by SZA (Lana)</li>
+          <li><a href="https://open.spotify.com/track/3dj4wgM3cPeuLwMNHDuBon?si=9c5b653dbe544766" target="_blank" rel="noopener noreferrer">The Door</a>, by Teddy Swims</li>
+          <li><a href="https://open.spotify.com/track/1hDaTv1fIBa3178MLmfdN4?si=8858dea368f4456c" target="_blank" rel="noopener noreferrer">Loml</a>, by Taylor Swift</li>
+          <li><a href="https://open.spotify.com/track/6tNQ70jh4OwmPGpYy6R2o9?si=e52176a0e82b4c6b" target="_blank" rel="noopener noreferrer">Beautiful Things</a>, by Benson Boone</li>
+        </ol>
+      </div>
+
+      <div class="bottom-text">
+        If you’d like the full playlist of 50 songs (nearly 3 hours of trending and new songs for Lyrical dances), please email me at
+        <a href="mailto:mbdancecuts@gmail.com">mbdancecuts@gmail.com</a>
+        or connect with me on Facebook!
+      </div>
+    </div>
+
+    <div class="right">
+      <img src="images/lyrical.jpg" alt="Lyrical dance promotional image">
+    </div>
+  </div>
+</body>
+</html>
