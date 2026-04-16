@@ -1,59 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CG99TYH350"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  gtag('config', 'G-CG99TYH350');
-</script>
-  <meta charset="UTF-8" />
-  <title>Mixes by Marc Beth</title>
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <!-- 🚫 Prevent search engines from indexing -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>Welcome</title>
+
+  <script>
+    // Helper: set cookie
+    function setCookie(name, value, days) {
+      const expires = new Date(Date.now() + days * 86400000).toUTCString();
+      document.cookie = name + "=" + value + "; expires=" + expires + "; path=/";
+    }
+
+    // Helper: get cookie
+    function getCookie(name) {
+      return document.cookie.split("; ").find(row => row.startsWith(name + "="))?.split("=")[1];
+    }
+
+    // Check URL params
+    const params = new URLSearchParams(window.location.search);
+    const accessParam = params.get("access");
+
+    // If they came in with the correct link → store access
+    if (accessParam === "dance") {
+      setCookie("mb_access", "true", 30); // 30 days access
+      window.location.replace("/mxd-84k2-final.html"); // 🔁 your hidden mixes page
+    }
+
+    // If they already have access → send them through
+    if (getCookie("mb_access") === "true") {
+      window.location.replace("/mxd-84k2-final.html");
+    }
+  </script>
+
   <style>
     body {
-      font-family: sans-serif;
-      padding: 2em;
-      background: #f4f4f4;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
       text-align: center;
     }
+
+    .container {
+      max-width: 500px;
+      padding: 20px;
+    }
+
     h1 {
-      font-size: 2em;
-      margin-bottom: 1em;
+      font-size: 28px;
+      margin-bottom: 10px;
     }
-    nav {
-      margin-bottom: 2em;
+
+    p {
+      opacity: 0.8;
+      margin-bottom: 20px;
     }
-    nav a {
-      margin: 0 1em;
+
+    .cta {
+      display: inline-block;
+      padding: 12px 20px;
+      background: #ffffff;
+      color: #000;
       text-decoration: none;
-      color: #0073e6;
+      border-radius: 6px;
       font-weight: bold;
     }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    .contact {
-      margin-top: 3em;
-      font-size: 1.1em;
+
+    .cta:hover {
+      opacity: 0.85;
     }
   </style>
 </head>
+
 <body>
+  <div class="container">
+    <h1>Private Mix Library</h1>
+    <p>
+      This collection isn’t publicly listed.
+      If you're looking for mixes for your dancers, I’ve got you covered.
+    </p>
 
-  <h1>Mixes by Marc Beth</h1>
+    <p>
+      Send me a quick message and I’ll get you access.
+    </p>
 
-  <nav>
-    <a href="basic2.html">Shorter Themed Mixes</a>
-    <a href="prodmixes2.html">Production Mixes</a>
-  </nav>
-
-  <div class="contact">
-    Contact <a href="mailto:marcgbeth@gmail.com">marcgbeth@gmail.com</a> to purchase a mix or to create a custom mix.
+    <!-- Replace with your actual DM funnel -->
+    <a class="cta" href="https://m.me/yourprofile" target="_blank">
+      Message Me for Access
+    </a>
   </div>
-
 </body>
 </html>
