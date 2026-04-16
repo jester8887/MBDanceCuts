@@ -3,36 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <meta name="robots" content="noindex, nofollow">
-
   <title>Welcome</title>
 
   <script>
-    function setCookie(name, value, days) {
-      const expires = new Date(Date.now() + days * 86400000).toUTCString();
-      document.cookie = name + "=" + value + "; expires=" + expires + "; path=/";
-    }
-
-    function getCookie(name) {
-      return document.cookie
-        .split("; ")
-        .find(row => row.startsWith(name + "="))
-        ?.split("=")[1];
-    }
-
     const params = new URLSearchParams(window.location.search);
     const accessParam = params.get("access");
-
-    // ✅ use RELATIVE path (fixes most break issues)
     const destination = "./new26mixes.html";
 
     if (accessParam === "dance") {
-      setCookie("mb_access", "true", 30);
+      localStorage.setItem("mb_access", "true");
       window.location.replace(destination);
     }
 
-    if (getCookie("mb_access") === "true") {
+    if (localStorage.getItem("mb_access") === "true") {
       window.location.replace(destination);
     }
   </script>
