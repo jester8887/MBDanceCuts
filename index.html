@@ -10,30 +10,27 @@
   <title>Welcome</title>
 
   <script>
-    // Helper: set cookie
     function setCookie(name, value, days) {
       const expires = new Date(Date.now() + days * 86400000).toUTCString();
       document.cookie = name + "=" + value + "; expires=" + expires + "; path=/";
     }
 
-    // Helper: get cookie
     function getCookie(name) {
       return document.cookie.split("; ").find(row => row.startsWith(name + "="))?.split("=")[1];
     }
 
-    // Check URL params
     const params = new URLSearchParams(window.location.search);
     const accessParam = params.get("access");
 
-    // If they came in with the correct link → store access
+    // If correct access link → store cookie + redirect
     if (accessParam === "dance") {
-      setCookie("mb_access", "true", 30); // 30 days access
-      window.location.replace("/mxd-84k2-final.html"); // 🔁 your hidden mixes page
+      setCookie("mb_access", "true", 30);
+      window.location.replace("/new26mixes.html");
     }
 
-    // If they already have access → send them through
+    // If already has access → redirect immediately
     if (getCookie("mb_access") === "true") {
-      window.location.replace("/mxd-84k2-final.html");
+      window.location.replace("/new26mixes.html");
     }
   </script>
 
@@ -93,7 +90,6 @@
       Send me a quick message and I’ll get you access.
     </p>
 
-    <!-- Replace with your actual DM funnel -->
     <a class="cta" href="https://m.me/yourprofile" target="_blank">
       Message Me for Access
     </a>
