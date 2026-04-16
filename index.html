@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- 🚫 Prevent search engines from indexing -->
   <meta name="robots" content="noindex, nofollow">
 
   <title>Welcome</title>
@@ -16,21 +15,25 @@
     }
 
     function getCookie(name) {
-      return document.cookie.split("; ").find(row => row.startsWith(name + "="))?.split("=")[1];
+      return document.cookie
+        .split("; ")
+        .find(row => row.startsWith(name + "="))
+        ?.split("=")[1];
     }
 
     const params = new URLSearchParams(window.location.search);
     const accessParam = params.get("access");
 
-    // If correct access link → store cookie + redirect
+    // ✅ use RELATIVE path (fixes most break issues)
+    const destination = "./new26mixes.html";
+
     if (accessParam === "dance") {
       setCookie("mb_access", "true", 30);
-      window.location.replace("/new26mixes.html");
+      window.location.replace(destination);
     }
 
-    // If already has access → redirect immediately
     if (getCookie("mb_access") === "true") {
-      window.location.replace("/MBDanceCuts/new26mixes.html");
+      window.location.replace(destination);
     }
   </script>
 
